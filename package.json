@@ -1,0 +1,29 @@
+{
+    "name": "pterodactyl.js",
+    "version": "0.0.1",
+    "description": "A wrapper for the Pterodactyl Panel API",
+    "main": "index.js",
+    "types": "src/types/index.d.ts",
+    "scripts": {
+        "watch": "tsc -w"
+    },
+    "keywords": [
+        "pterodactyl",
+        "pterodactyl panel",
+        "pterodactyl-panel",
+        "ptero"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/RedstoneGamez/Pterodactyl.js.git"
+    },
+    "author": "RedstoneGamez (RedstoneGamez#0001)",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^0.19.0"
+    },
+    "devDependencies": {
+        "@types/node": "^12.0.8",
+        "typescript": "^3.5.2"
+    }
+}
