@@ -88,9 +88,11 @@ class Server {
     }
 
     public getApplicationInfo(): Promise<ServerOptions> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/applcation/servers/${this.internalId}`).then(res => resolve(new ServerModel(res.data.attributes))).catch(error => reject(error));
-        });
+        while (this.internalId) {
+            return new Promise((resolve, reject) => {
+                this.api.call(`/applcation/servers/${this.internalId}`).then(res => resolve(new ServerModel(res.data.attributes))).catch(error => reject(error));
+            });
+        }
     }
 
     public suspend(): Promise<any> {
