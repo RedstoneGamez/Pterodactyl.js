@@ -1,7 +1,6 @@
 import PterodactylAPI from '../index';
 
 import ServerModel from '../models/Server';
-import ClientServerModel from '../models/ClientServer';
 
 interface ServerLimits {
     memory: number;
