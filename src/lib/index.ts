@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-// const packageJson = require('./package.json');
+const packageJson = require('./package.json');
 
 interface PterodactylAPIVars {
     url: string;
@@ -47,10 +47,8 @@ class PterodactylJS implements PterodactylAPIVars {
         }
     }
 
-    public call(/*params: any = {}, */endpoint: string = '/', method: any = 'GET', data: any = {}): Promise<AxiosResponse<any>> {
+    public call(endpoint: string = '/', method: any = 'GET', data: any = {}): Promise<AxiosResponse<any>> {
         let url = this.baseUrl + endpoint;
-
-        console.log(url);
 
         return new Promise((resolve, reject) => {
             axios.request({
@@ -61,9 +59,9 @@ class PterodactylJS implements PterodactylAPIVars {
                 headers: {
                     'Authorization': `Bearer ${this.apiKey}`,
                     'Content-Type': 'application/json',
-                    'User-Agent': `Pterodactyl.js v${/*packageJson.version*/ '0.0.0'}`
+                    'User-Agent': `Pterodactyl.js v${packageJson.version}`
                 }
-            }).then(response => resolve(response)).catch(error => reject(error + url));
+            }).then(response => resolve(response)).catch(error => reject(error));
         });
     }
 }
