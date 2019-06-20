@@ -23,17 +23,6 @@ interface ServerContainer {
     environment: any;
 }
 
-interface ClientServerOptions {
-    serverOwner: boolean;
-    identifier: string;
-    internalId: string;
-    uuid: string;
-    name: string;
-    description: string;
-    limits: ServerLimits;
-    featureLimits: ServerFeatureLimits;
-}
-
 interface ServerOptions {
     id: number;
     externalId: any;
@@ -69,25 +58,14 @@ interface ServerOptions {
 
 class Server {
     private api: PterodactylAPI;
-    private serverId: string;
     private internalId: string;
 
-    constructor(api: PterodactylAPI, serverId: string) {
+    constructor(api: PterodactylAPI, internalId: string) {
         this.api = api;
-        this.serverId = serverId;
-
-        this.getInfo().then(info => {
-            this.internalId = info.internalId;
-        });
+        this.internalId = internalId;
     }
 
-    public getInfo(): Promise<ClientServerOptions> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}`).then(res => resolve(new ClientServerModel(res.data.attributes))).catch(error => reject(error));
-        });
-    }
-
-    public getApplicationInfo(): Promise<ServerOptions> {
+    public getInfo(): Promise<ServerOptions> {
         while (this.internalId) {
             return new Promise((resolve, reject) => {
                 this.api.call(`/applcation/servers/${this.internalId}`).then(res => resolve(new ServerModel(res.data.attributes))).catch(error => reject(error));
@@ -107,18 +85,6 @@ class Server {
         });
     }
 
-    public updateServerDetails() {
-        console.warn(`Warning: Function 'updateServerDetails' has not been completed yet.`);
-    }
-
-    public updateBuildConfig() {
-        console.warn(`Warning: Function 'updateBuildConfig' has not been completed yet.`);
-    }
-
-    public updateStartupParameters() {
-        console.warn(`Warning: Function 'updateStartupParameters' has not been completed yet.`);
-    }
-
     public reinstall(): Promise<any> {
         return new Promise((resolve, reject) => {
             this.api.call(`/application/servers/${this.internalId}/reinstall`, 'POST').then(res => resolve(res.data)).catch(error => reject(error));
@@ -127,72 +93,6 @@ class Server {
     public rebuild(): Promise<any> {
         return new Promise((resolve, reject) => {
             this.api.call(`/application/servers/${this.internalId}/rebuild`, 'POST').then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
-
-    public cpuUsage(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve({ used: res.data.attributes.cpu.current, total: res.data.attributes.cpu.limit })).catch(error => reject(error));
-        });
-    }
-
-    public diskUsage(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve({ used: res.data.attributes.disk.current, total: res.data.attributes.disk.limit })).catch(error => reject(error));
-        });
-    }
-
-    public memoryUsage(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve({ used: res.data.attributes.memory.current, total: res.data.attributes.memory.limit })).catch(error => reject(error));
-        });
-    }
-
-    public powerState(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve(res.data.attributes.state)).catch(error => reject(error));
-        });
-    }
-
-    public start(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'start' }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
-
-    public stop(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'stop' }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
-
-    public restart(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'restart' }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
-
-    public kill(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'kill' }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
-
-    public databaseAmount(): Promise<number> {
-        return new Promise((resolve, reject) => {
-            this.getInfo().then(info => resolve(info.featureLimits.databases)).catch(error => reject(error));
-        });
-    }
-
-    public allocationsAmount(): Promise<number> {
-        return new Promise((resolve, reject) => {
-            this.getInfo().then(info => resolve(info.featureLimits.allocations)).catch(error => reject(error));
-        });
-    }
-
-    public sendCommand(command: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/command`, 'POST', { command }).then(res => resolve(res.data)).catch(error => reject(error));
         });
     }
 

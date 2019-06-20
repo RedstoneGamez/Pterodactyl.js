@@ -1,4 +1,4 @@
-import PterodactylAPI from '../index';
+import AdminAPI from '../AdminAPI';
 
 import UserModel from '../models/User';
 
@@ -20,11 +20,12 @@ interface UserOptions {
 }
 
 class User {
-    private api: PterodactylAPI;
+    private api: AdminAPI;
     private userId: any;
+    private internalId: string;
     private username: string;
 
-    constructor(api: PterodactylAPI, userId: any) {
+    constructor(api: AdminAPI, userId: any) {
         this.api = api;
         this.userId = userId;
 
@@ -34,6 +35,7 @@ class User {
                 let user = users.filter(user => user.username === this.username);
 
                 this.userId = user[0].id;
+                this.internalId = user[0].internalId;
             }).catch(error => { throw error; });
         } else {
             this.getInfo().then(info => {

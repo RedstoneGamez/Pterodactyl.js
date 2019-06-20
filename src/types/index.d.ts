@@ -2,7 +2,7 @@ declare module 'pterodactyl.js' {
 
     import { AxiosResponse } from 'axios';
 
-    export class Client {
+    export class PterodactylJSBase implements PterodactylAPIVars {
         constructor(url: string, apiKey: string);
 
         public url: string;
@@ -12,10 +12,12 @@ declare module 'pterodactyl.js' {
         private getHostname(): string;
 
         public call(endpoint: string, method: any, data: any): Promise<AxiosResponse<any>>;
+    }
+
+    export class AdminClient extends PterodactylJSBase {
+        constructor(url: string, apiKey: string);
 
         public testConnection(): Promise<any>;
-
-        public getClientServers(): Promise<ClientServerModel[]>;
 
         public getUsers(): Promise<UserModel[]>;
 
@@ -40,10 +42,52 @@ declare module 'pterodactyl.js' {
         public getEgg(nestId: string, eggId: string): Promise<Egg>;
     }
 
-    export class User {
-        constructor(api: Client, userId: any);
+    export class UserClient extends PterodactylJSBase {
+        constructor(url: string, apiKey: string);
 
-        private api: Client;
+        public testConnection(): Promise<any>;
+
+        public getClientServers(): Promise<ClientServerModel[]>;
+
+        public getClientServer(serverId: string): Promise<ClientServer>;
+    }
+
+    export class ClientServer {
+        constructor(api: AdminClient, userId: any);
+
+        private api: UserClient;
+        private userId: any;
+        private username: string;
+
+        public getInfo(): Promise<ClientServerOptions>;
+
+        public cpuUsage(): Promise<any>;
+
+        public diskUsage(): Promise<any>;
+
+        public memoryUsage(): Promise<any>;
+
+        public powerState(): Promise<string>;
+
+        public start(): Promise<any>;
+
+        public stop(): Promise<any>;
+
+        public restart(): Promise<any>;
+
+        public kill(): Promise<any>;
+
+        public databaseAmount(): Promise<number>;
+
+        public allocationsAmount(): Promise<number>
+
+        public sendCommand(command: string): Promise<any>;
+    }
+
+    export class User {
+        constructor(api: AdminClient, userId: any);
+
+        private api: AdminClient;
         private userId: any;
         private username: string;
 
@@ -61,9 +105,9 @@ declare module 'pterodactyl.js' {
     }
 
     export class Node {
-        constructor(api: Client, nodeId: string);
+        constructor(api: AdminClient, nodeId: string);
 
-        private api: Client;
+        private api: AdminClient;
         private nodeId: string;
 
         public getInfo(): Promise<NodeOptions>;
@@ -102,9 +146,9 @@ declare module 'pterodactyl.js' {
     }
 
     export class Location {
-        constructor(api: Client, locationId: string);
+        constructor(api: AdminClient, locationId: string);
 
-        private api: Client;
+        private api: AdminClient;
         private locationId: string;
 
         public getInfo(): Promise<LocationOptions>;
@@ -115,15 +159,12 @@ declare module 'pterodactyl.js' {
     }
 
     export class Server {
-        constructor(api: Client, serverId: string);
+        constructor(api: AdminClient, serverId: string);
 
-        private api: Client;
-        private serverId: string;
+        private api: AdminClient;
         private internalId: string;
 
-        public getInfo(): Promise<ClientServerOptions>;
-
-        public getApplicationInfo(): Promise<ServerOptions>;
+        public getInfo(): Promise<ServerOptions>;
 
         public suspend(): Promise<any>;
 
@@ -132,28 +173,6 @@ declare module 'pterodactyl.js' {
         public reinstall(): Promise<any>;
 
         public rebuild(): Promise<any>;
-
-        public cpuUsage(): Promise<any>;
-
-        public diskUsage(): Promise<any>;
-
-        public memoryUsage(): Promise<any>;
-
-        public powerState(): Promise<string>;
-
-        public start(): Promise<any>;
-
-        public stop(): Promise<any>;
-
-        public restart(): Promise<any>;
-
-        public kill(): Promise<any>;
-
-        public databaseAmount(): Promise<number>;
-
-        public allocationsAmount(): Promise<number>
-
-        public sendCommand(command: string): Promise<any>;
 
         public isSuspended(): Promise<boolean>;
 
@@ -181,9 +200,9 @@ declare module 'pterodactyl.js' {
     }
 
     export class Nest {
-        constructor(api: Client, nestId: string);
+        constructor(api: AdminClient, nestId: string);
 
-        private api: Client;
+        private api: AdminClient;
         private nestId: string;
 
         public getInfo(): Promise<NestOptions>;
@@ -194,9 +213,9 @@ declare module 'pterodactyl.js' {
     }
 
     export class Egg {
-        constructor(api: Client, nestId: string, eggId: string);
+        constructor(api: AdminClient, nestId: string, eggId: string);
 
-        private api: Client;
+        private api: AdminClient;
         private nestId: string;
         private eggId: string;
 
@@ -324,6 +343,12 @@ declare module 'pterodactyl.js' {
     }
 
     // Type Defs
+
+    interface PterodactylAPIVars {
+        url: string;
+        baseUrl: string;
+        apiKey: string;
+    }
 
     interface ServerLimits {
         memory: number;

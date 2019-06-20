@@ -1,4 +1,5 @@
-import PterodactylAPI from './lib/index';
+import AdminPterodactylAPI from './lib/AdminAPI';
+import UserPterodactylAPI from './lib/UserAPI';
 
 import User from './lib/client/User';
 import Node from './lib/client/Node';
@@ -16,7 +17,8 @@ import NestModel from './lib/models/Nest';
 import EggModel from './lib/models/Egg';
 
 export {
-    PterodactylAPI as Client,
+    AdminPterodactylAPI as AdminClient,
+    UserPterodactylAPI as UserClient,
 
     User,
     Node,
