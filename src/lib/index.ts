@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const packageJson = require('./package.json');
+const packageJson = require('../package.json');
 
 interface PterodactylAPIVars {
     url: string;
