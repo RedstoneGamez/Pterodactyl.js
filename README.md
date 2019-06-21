@@ -14,7 +14,10 @@ npm i pterodactyl.js
 ```js
 const Pterodactyl = require('pterodactyl.js');
 
-const client = new Pterodactyl.AdminClient('https://pterodactyl.app/', 'API Key');
+const client = new Pterodactyl.Builder()
+    .setURL('https://pterodactyl.app/')
+    .setAPIKey('API Key')
+    .asAdmin();
 
 client.getServers()
 .then(async servers => {
@@ -34,7 +37,10 @@ client.getServers()
 ```js
 const Pterodactyl = require('pterodactyl.js');
 
-const client = new Pterodactyl.UserClient('https://pterodactyl.app/', 'API Key');
+const client = new Pterodactyl.Builder()
+    .setURL('https://pterodactyl.app/')
+    .setAPIKey('API Key')
+    .asUser();
 
 client.getClientServers()
 .then(async servers => {
@@ -57,7 +63,10 @@ client.getClientServers()
 ```js
 const Pterodactyl = require('pterodactyl.js');
 
-const client = new Pterodactyl.AdminClient('https://pterodactyl.app/', 'API Key');
+const client = new Pterodactyl.Builder()
+    .setURL('https://pterodactyl.app/')
+    .setAPIKey('API Key')
+    .asAdmin();
 
 let isAccountCredentials = (username, email) => {
     return new Promise((resolve, reject) => {

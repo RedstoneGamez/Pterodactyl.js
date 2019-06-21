@@ -1,3 +1,5 @@
+import APIBuilder from './lib/Builder';
+
 import AdminPterodactylAPI from './lib/AdminAPI';
 import UserPterodactylAPI from './lib/UserAPI';
 
@@ -17,6 +19,8 @@ import NestModel from './lib/models/Nest';
 import EggModel from './lib/models/Egg';
 
 export {
+    APIBuilder as Builder,
+
     AdminPterodactylAPI as AdminClient,
     UserPterodactylAPI as UserClient,
 
