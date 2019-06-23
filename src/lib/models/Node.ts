@@ -68,7 +68,7 @@ class Node implements NodeOptions {
         this.public = data.public;
         this.name = data.name;
         this.description = data.description;
-        this.locationId - data.location_id;
+        this.locationId = data.location_id;
         this.fqdn = data.fqdn;
         this.scheme = data.scheme;
         this.behindProxy = data.behind_proxy;
@@ -83,6 +83,30 @@ class Node implements NodeOptions {
         this.daemonBase = data.daemon_base;
         this.updatedAt = new Date(data.updated_at);
         this.createdAt = new Date(data.created_at);
+    }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            public: this.public,
+            name: this.name,
+            description: this.description,
+            locationId: this.locationId,
+            fqdn: this.fqdn,
+            scheme: this.scheme,
+            behindProxy: this.behindProxy,
+            maintenanceMode: this.maintenanceMode,
+            memory: this.memory,
+            memoryOverAllocate: this.memoryOverAllocate,
+            disk: this.disk,
+            diskOverAllocate: this.diskOverAllocate,
+            uploadSize: this.uploadSize,
+            daemonListen: this.daemonListen,
+            daemonSftp: this.daemonSftp,
+            daemonBase: this.daemonBase,
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt
+        };
     }
 }
 

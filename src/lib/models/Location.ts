@@ -28,6 +28,16 @@ class Location implements LocationOptions {
         this.updatedAt = new Date(data.updated_at);
         this.createdAt = new Date(data.created_at);
     }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            shortCode: this.shortCode,
+            description: this.description,
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt
+        };
+    }
 }
 
 export default Location;

@@ -55,6 +55,22 @@ class Egg implements EggOptions {
         this.updatedAt = new Date(data.updated_at);
         this.createdAt = new Date(data.created_at);
     }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            uuid: this.uuid,
+            nest: this.nest,
+            author: this.author,
+            description: this.description,
+            dockerImage: this.dockerImage,
+            config: this.config,
+            startup: this.startup,
+            script: this.script,
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt
+        };
+    }
 }
 
 export default Egg;

@@ -39,6 +39,18 @@ class Nest implements NestOptions {
         this.updatedAt = new Date(data.updated_at);
         this.createdAt = new Date(data.created_at);
     }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            uuid: this.uuid,
+            author: this.author,
+            name: this.name,
+            description: this.description,
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt
+        };
+    }
 }
 
 export default Nest;

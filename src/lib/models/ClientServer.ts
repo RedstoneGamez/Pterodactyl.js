@@ -52,6 +52,27 @@ class ClientServer implements ServerOptions {
         this.limits = data.limits;
         this.featureLimits = data.feature_limits;
     }
+
+    public toJSON(): any {
+        return {
+            serverOwner: this.serverOwner,
+            identifier: this.identifier,
+            uuid: this.uuid,
+            name: this.name,
+            description: this.description,
+            limits: {
+                memory: this.limits.memory,
+                swap: this.limits.swap,
+                disk: this.limits.disk,
+                io: this.limits.io,
+                cpu: this.limits.cpu
+            },
+            featureLimits: {
+                databases: this.featureLimits.databases,
+                allocations: this.featureLimits.allocations
+            }
+        };
+    }
 }
 
 export default ClientServer;

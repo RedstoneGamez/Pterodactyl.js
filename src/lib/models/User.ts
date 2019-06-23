@@ -62,6 +62,24 @@ class User implements UserOptions {
         this.updatedAt = new Date(data.updated_at);
         this.createdAt = new Date(data.created_at);
     }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            externalId: this.externalId,
+            uuid: this.uuid,
+            username: this.username,
+            email: this.username,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            fullName: this.firstName + ' ' + this.lastName,
+            language: this.language,
+            rootAdmin: this.rootAdmin,
+            twoFactor: this.twoFactor,
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt
+        };
+    }
 }
 
 export default User;

@@ -1,5 +1,3 @@
-// import axios from 'axios';
-
 import UserAPI from './UserAPI';
 import AdminAPI from './AdminAPI';
 

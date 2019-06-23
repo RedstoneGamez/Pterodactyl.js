@@ -114,7 +114,43 @@ class Server implements ServerOptions {
         };
         this.updatedAt = new Date(data.updated_at);
         this.createdAt = new Date(data.created_at);
+    }
 
+    public toJSON(): any {
+        return {
+            id: this.id,
+            externalId: this.externalId,
+            uuid: this.uuid,
+            identifier: this.identifier,
+            name: this.name,
+            description: this.description,
+            suspended: this.suspended,
+            limits: {
+                memory: this.limits.memory,
+                swap: this.limits.swap,
+                disk: this.limits.disk,
+                io: this.limits.io,
+                cpu: this.limits.cpu
+            },
+            featureLimits: {
+                databases: this.featureLimits.databases,
+                allocations: this.featureLimits.allocations
+            },
+            user: this.user,
+            node: this.node,
+            allocation: this.allocation,
+            nest: this.nest,
+            egg: this.egg,
+            pack: this.pack,
+            container: {
+                startupCommand: this.container.startupCommand,
+                image: this.container.image,
+                installed: this.container.installed,
+                environment: this.container.environment,
+            },
+            updatedAt: this.updatedAt,
+            createdAt: this.createdAt
+        };
     }
 }
 
