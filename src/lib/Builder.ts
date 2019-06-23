@@ -18,53 +18,34 @@ class PterodactylAPIBuilder {
         this.apiKey = apiKey;
     }
 
-    private build(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            if (this.url && this.apiKey) {
-                resolve(true);
-            } else {
-                let error = new Error('Please provide both a URL and API Key to the Client Builder.');
+    private build(): boolean | Error {
+        if (this.url && this.apiKey) {
+            return true;
+        } else {
+            let error = new Error('Please provide both a URL and API Key to the Client Builder.');
 
-                reject(error);
-                throw error;
-            }
-        });
+            return error;
+        }
     }
 
     public asUser(): UserAPI {
-        let func = async () => {
-            let built = await this.build();
+        let built = this.build();
 
-            if (typeof built === 'boolean') {
-                return new UserAPI(this.url, this.apiKey);
-            } else {
-                return built;
-            }
-        };
-
-        return this.asUserType(func());
-    }
-
-    private asUserType(value: any): UserAPI {
-        return value;
+        if (typeof built === 'boolean') {
+            return new UserAPI(this.url, this.apiKey);
+        } else {
+            throw built;
+        }
     }
 
     public asAdmin(): AdminAPI {
-        let func = async () => {
-            let built = await this.build();
+        let built = this.build();
 
-            if (typeof built === 'boolean') {
-                return new AdminAPI(this.url, this.apiKey);
-            } else {
-                return built;
-            }
-        };
-
-        return this.asAdminType(func());
-    }
-
-    private asAdminType(value: any): AdminAPI {
-        return value;
+        if (typeof built === 'boolean') {
+            return new AdminAPI(this.url, this.apiKey);
+        } else {
+            throw built;
+        }
     }
 }
 
