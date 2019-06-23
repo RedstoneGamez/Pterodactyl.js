@@ -25,11 +25,8 @@ client.getServers()
 
     let info = await server.getInfo();
 
-    await server.setName('Server Name');
-    await server.setDescription('Minecraft Server');
-}).catch(error => {
-    console.log(error);
-});
+    console.log(info.toJSON());
+}).catch(error => console.log(error));
 ```
 
 ### User API
@@ -48,12 +45,12 @@ client.getClientServers()
 
     let info = await server.getInfo();
 
+    console.log(info.toJSON());
+
     await server.start();
 
     await server.sendCommand('help');
-}).catch(error => {
-    console.log(error);
-});
+}).catch(error => console.log(error));
 ```
 
 ## Examples
