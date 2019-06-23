@@ -50,29 +50,29 @@ class User {
         });
     }
 
-    public setUsername(username: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/users/${this.userId}`, 'PATCH', { username }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-        });
-    }
+    // public setUsername(username: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/users/${this.userId}`, 'PATCH', { username }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setEmail(email: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/users/${this.userId}`, 'PATCH', { email }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-        });
-    }
+    // public setEmail(email: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/users/${this.userId}`, 'PATCH', { email }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setFirstName(firstName: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/users/${this.userId}`, 'PATCH', { first_name: firstName }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-        });
-    }
+    // public setFirstName(firstName: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/users/${this.userId}`, 'PATCH', { first_name: firstName }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setLastName(lastName: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/users/${this.userId}`, 'PATCH', { last_name: lastName }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-        });
-    }
+    // public setLastName(lastName: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/users/${this.userId}`, 'PATCH', { last_name: lastName }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+    //     });
+    // }
 
     public delete(): Promise<any> {
         return new Promise((resolve, reject) => {

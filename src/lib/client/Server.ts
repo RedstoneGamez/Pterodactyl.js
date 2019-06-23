@@ -97,69 +97,69 @@ class Server {
 
     public isSuspended(): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`).then(res => resolve(res.data.attributes.suspended)).catch(error => reject(error));
+            this.api.call(`/application/servers/${this.internalId}`).then(res => resolve(res.data.attributes.suspended)).catch(error => reject(error));
         });
     }
 
-    public setName(name: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'POST', { name }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setName(name: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', { name }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setDescription(description: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'POST', { description }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setDescription(description: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', { description }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setOwner(user: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'POST', { user }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setOwner(user: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', { user }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setMemory(memory: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { memory }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setMemory(memory: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { memory }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setCPU(cpu: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { cpu }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setCPU(cpu: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { cpu }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setDisk(disk: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { disk }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setDisk(disk: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { disk }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setIO(io: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { io }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setIO(io: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { io }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setSwap(swap: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { swap }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setSwap(swap: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { swap }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setDatabaseAmount(amount: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { feature_limits: { databases: amount } }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setDatabaseAmount(amount: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { feature_limits: { databases: amount } }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
-    public setAllocationAmount(amount: number): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { feature_limits: { allocations: amount } }).then(res => resolve(res.data)).catch(error => reject(error));
-        });
-    }
+    // public setAllocationAmount(amount: number): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         this.api.call(`/application/servers/${this.internalId}/build`, 'POST', { feature_limits: { allocations: amount } }).then(res => resolve(res.data)).catch(error => reject(error));
+    //     });
+    // }
 
     public delete(force?: boolean): Promise<any> {
         return new Promise((resolve, reject) => {
