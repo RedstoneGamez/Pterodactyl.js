@@ -31,20 +31,40 @@ class PterodactylAPIBuilder {
         });
     }
 
-    public asUser(): Promise<UserAPI> {
-        return new Promise((resolve, reject) => {
-            this.build().then(result => {
-                if (result) resolve(new UserAPI(this.url, this.apiKey));
-            }).catch(error => reject(error));
-        });
+    public asUser(): UserAPI {
+        let func = async () => {
+            let built = await this.build();
+
+            if (typeof built === 'boolean') {
+                return new UserAPI(this.url, this.apiKey);
+            } else {
+                return built;
+            }
+        };
+
+        return this.asUserType(func());
     }
 
-    public asAdmin(): Promise<AdminAPI> {
-        return new Promise((resolve, reject) => {
-            this.build().then(result => {
-                if (result) resolve(new AdminAPI(this.url, this.apiKey));
-            }).catch(error => reject(error));
-        });
+    private asUserType(value: any): UserAPI {
+        return value;
+    }
+
+    public asAdmin(): AdminAPI {
+        let func = async () => {
+            let built = await this.build();
+
+            if (typeof built === 'boolean') {
+                return new AdminAPI(this.url, this.apiKey);
+            } else {
+                return built;
+            }
+        };
+
+        return this.asAdminType(func());
+    }
+
+    private asAdminType(value: any): AdminAPI {
+        return value;
     }
 }
 
