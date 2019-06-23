@@ -14,9 +14,13 @@ declare module 'pterodactyl.js' {
 
         private build(): Promise<boolean>;
 
-        public asUser(): Promise<UserClient>;
+        public asUser(): UserClient;
 
-        public asAdmin(): Promise<AdminClient>;
+        private asUserType(value: any): UserClient;
+
+        public asAdmin(): AdminClient;
+
+        private asAdminType(value: any): AdminClient;
     }
 
     export class PterodactylJSBase implements PterodactylAPIVars {
