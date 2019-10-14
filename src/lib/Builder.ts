@@ -10,12 +10,14 @@ class PterodactylAPIBuilder {
         this.apiKey = apiKey;
     }
 
-    public setURL(url: string): void {
+    public setURL(url: string): PterodactylAPIBuilder {
         this.url = url;
+        return this;
     }
 
-    public setAPIKey(apiKey: string): void {
+    public setAPIKey(apiKey: string): PterodactylAPIBuilder {
         this.apiKey = apiKey;
+        return this;
     }
 
     private build(): boolean | Error {

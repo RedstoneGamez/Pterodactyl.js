@@ -101,11 +101,11 @@ class Server {
         });
     }
 
-    // public setName(name: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', { name }).then(res => resolve(res.data)).catch(error => reject(error));
-    //     });
-    // }
+    public setName(name: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', { name }).then(res => resolve(res.data)).catch(error => reject(error));
+        });
+    }
 
     // public setDescription(description: string): Promise<any> {
     //     return new Promise((resolve, reject) => {

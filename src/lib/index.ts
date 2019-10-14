@@ -61,8 +61,18 @@ class PterodactylJS implements PterodactylAPIVars {
                     'Content-Type': 'application/json',
                     'User-Agent': `Pterodactyl.js v${packageJson.version}`
                 }
-            }).then(response => resolve(response)).catch(error => reject(error));
+            }).then(response => resolve(response)).catch(error => reject(this.handleError(error.response.data)));
         });
+    }
+
+    private handleError(error: any) {
+        if (error.code === 'ENOTFOUND') {
+            console.log('Panel URL Not Found!');
+            return error;
+        }
+
+        console.log(error);
+
     }
 }
 
