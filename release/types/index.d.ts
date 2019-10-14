@@ -8,9 +8,9 @@ declare module 'pterodactyl.js' {
         private url: string;
         private apiKey: string;
 
-        public setURL(url: string): void;
+        public setURL(url: string): Builder;
 
-        public setAPIKey(apiKey: string): void;
+        public setAPIKey(apiKey: string): Builder;
 
         private build(): Promise<boolean>;
 
