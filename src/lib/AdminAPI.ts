@@ -1,4 +1,4 @@
-import PterodactylJS from './index';
+import PterodactylAPI from './index';
 
 import User from './client/User';
 import Node from './client/Node';
@@ -12,7 +12,7 @@ import { NewUserOptions } from './models/User';
 import { NewLocationOptions } from './models/Location';
 import { NewNodeOptions } from './models/Node';
 
-class AdminPterodactylAPI extends PterodactylJS {
+class AdminClient extends PterodactylAPI {
     constructor(url: string, apiKey: string) {
         super(url, apiKey);
     }
@@ -44,24 +44,24 @@ class AdminPterodactylAPI extends PterodactylJS {
         });
     }
 
-    public getUsers(): Promise<User[]> {
-        return User.getAll(this);
+    public getUsers(page?: number): Promise<User[]> {
+        return User.getAll(this, page);
     }
 
-    public getNodes(): Promise<Node[]> {
-        return Node.getAll(this);
+    public getNodes(page?: number): Promise<Node[]> {
+        return Node.getAll(this, page);
     }
 
-    public getLocations(): Promise<Location[]> {
-        return Location.getAll(this);
+    public getLocations(page?: number): Promise<Location[]> {
+        return Location.getAll(this, page);
     }
 
-    public getServers(): Promise<Server[]> {
-        return Server.getAll(this);
+    public getServers(page?: number): Promise<Server[]> {
+        return Server.getAll(this, page);
     }
 
-    public getNests(): Promise<Nest[]> {
-        return Nest.getAll(this);
+    public getNests(page?: number): Promise<Nest[]> {
+        return Nest.getAll(this, page);
     }
 
     public getUser(userId: number): Promise<User> {
@@ -105,4 +105,4 @@ class AdminPterodactylAPI extends PterodactylJS {
     }
 }
 
-export default AdminPterodactylAPI;
+export default AdminClient;

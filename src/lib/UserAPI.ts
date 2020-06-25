@@ -1,8 +1,8 @@
-import PterodactylJS from './index';
+import PterodactylAPI from './index';
 
 import ClientServer from './client/ClientServer';
 
-class UserPterodactylAPI extends PterodactylJS {
+class UserClient extends PterodactylAPI {
     constructor(url: string, apiKey: string) {
         super(url, apiKey);
     }
@@ -34,8 +34,8 @@ class UserPterodactylAPI extends PterodactylJS {
         });
     }
 
-    public getClientServers(): Promise<ClientServer[]> {
-        return ClientServer.getAll(this);
+    public getClientServers(page?: number): Promise<ClientServer[]> {
+        return ClientServer.getAll(this, page);
     }
 
     public getClientServer(serverId: string): Promise<ClientServer> {
@@ -43,4 +43,4 @@ class UserPterodactylAPI extends PterodactylJS {
     }
 }
 
-export default UserPterodactylAPI;
+export default UserClient;

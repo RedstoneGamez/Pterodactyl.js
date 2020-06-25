@@ -1,13 +1,16 @@
 import AdminAPI from '../AdminAPI';
 
 import LocationModel, { LocationOptionsRaw, NewLocationOptions } from '../models/Location';
+import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
 
 class Location extends LocationModel {
     private api: AdminAPI;
+    public pagination?: Pagination;
 
-    constructor(api: AdminAPI, data: LocationOptionsRaw) {
+    constructor(api: AdminAPI, data: LocationOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
+        this.pagination = new Pagination(paginationOptions);
     }
 
     public static create(api: AdminAPI, options: NewLocationOptions): Promise<Location> {
@@ -16,11 +19,11 @@ class Location extends LocationModel {
         });
     }
 
-    public static getAll(api: AdminAPI): Promise<Location[]> {
+    public static getAll(api: AdminAPI, page: number = 1): Promise<Location[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await api.call(`/application/locations`);
-                resolve(res.data.data.map((value: any) => new Location(api, value.attributes)));
+                let res = await api.call(`/application/locations?page=${page}`);
+                resolve(res.data.data.map((value: any) => new Location(api, value.attributes, res.data.meta)));
             } catch (error) {
                 reject(error);
             }

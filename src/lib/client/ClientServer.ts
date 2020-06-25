@@ -1,6 +1,7 @@
 import PterodactylAPI from '../index';
 
 import ClientServerModel, { ServerOptionsRaw, } from '../models/ClientServer';
+import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
 
 interface UtilizationData {
     used: number;
@@ -9,17 +10,19 @@ interface UtilizationData {
 
 class ClientServer extends ClientServerModel {
     private api: PterodactylAPI;
+    public pagination?: Pagination;
 
-    constructor(api: PterodactylAPI, options: ServerOptionsRaw) {
-        super(options);
+    constructor(api: PterodactylAPI, data: ServerOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
+        super(data);
         this.api = api;
+        this.pagination = new Pagination(paginationOptions);
     }
 
-    public static getAll(api: PterodactylAPI): Promise<ClientServer[]> {
+    public static getAll(api: PterodactylAPI, page: number = 1): Promise<ClientServer[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await api.call(`/client`);
-                resolve(res.data.data.map((value: any) => new ClientServer(api, value.attributes)));
+                let res = await api.call(`/client?page=${page}`);
+                resolve(res.data.data.map((value: any) => new ClientServer(api, value.attributes, res.data.meta)));
             } catch (error) {
                 reject(error);
             }

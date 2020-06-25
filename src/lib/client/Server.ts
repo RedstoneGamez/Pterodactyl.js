@@ -2,66 +2,16 @@ import AdminAPI from '../AdminAPI';
 
 import ServerModel, { ServerOptionsRaw, ServerDetailsRequestOptions, ServerBuildConfigRequestOptions, ServerStartupRequestOptions, NewServerOptions } from '../models/Server';
 import ServerDatabase from './ServerDatabase';
-
-// interface ServerLimits {
-//     memory: number;
-//     swap: number;
-//     disk: number;
-//     io: number;
-//     cpu: number;
-// }
-
-// interface ServerFeatureLimits {
-//     databases: number;
-//     allocations: number;
-// }
-
-// interface ServerContainer {
-//     startupCommand: string;
-//     image: string;
-//     installed: boolean;
-//     environment: any;
-// }
-
-// interface ServerOptions {
-//     id: number;
-//     externalId: any;
-//     internalId: string;
-//     uuid: string;
-//     identifier: string;
-//     name: string;
-//     description: string;
-//     suspended: boolean;
-//     limits: ServerLimits;
-//     featureLimits: ServerFeatureLimits;
-//     user: number;
-//     node: number;
-//     allocation: number;
-//     nest: number;
-//     egg: number;
-//     pack: any;
-//     container: ServerContainer;
-//     updatedAt: Date;
-//     createdAt: Date;
-// }
-
-/**
- * @todo
- * - Update Server Details //
- * - Update Startup Config //
- * 
- * - GET Databases
- * - GET Database
- * - DELETE Database
- * 
- */
+import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
 
 class Server extends ServerModel {
     private api: AdminAPI;
+    public pagination?: Pagination;
 
-    constructor(api: AdminAPI, data: ServerOptionsRaw) {
+    constructor(api: AdminAPI, data: ServerOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
+        this.pagination = new Pagination(paginationOptions);
     }
 
     public static create(api: AdminAPI, options: NewServerOptions): Promise<Server> {
@@ -70,11 +20,11 @@ class Server extends ServerModel {
         });
     }
 
-    public static getAll(api: AdminAPI): Promise<Server[]> {
+    public static getAll(api: AdminAPI, page: number = 1): Promise<Server[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await api.call(`/application/servers`);
-                resolve(res.data.data.map((value: any) => new Server(api, value.attributes)));
+                let res = await api.call(`/application/servers?page=${page}`);
+                resolve(res.data.data.map((value: any) => new Server(api, value.attributes, res.data.meta)));
             } catch (error) {
                 reject(error);
             }

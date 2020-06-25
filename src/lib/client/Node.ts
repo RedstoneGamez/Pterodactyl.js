@@ -2,13 +2,16 @@ import AdminAPI from '../AdminAPI';
 
 import NodeModel, { NodeOptionsRaw, NewNodeOptions } from '../models/Node';
 import NodeAllocation from './NodeAllocation';
+import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
 
 class Node extends NodeModel {
     private api: AdminAPI;
+    public pagination?: Pagination;
 
-    constructor(api: AdminAPI, data: NodeOptionsRaw) {
+    constructor(api: AdminAPI, data: NodeOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
+        this.pagination = new Pagination(paginationOptions);
     }
 
     public static create(api: AdminAPI, options: NewNodeOptions): Promise<Node> {
@@ -17,11 +20,11 @@ class Node extends NodeModel {
         });
     }
 
-    public static getAll(api: AdminAPI): Promise<Node[]> {
+    public static getAll(api: AdminAPI, page: number = 1): Promise<Node[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await api.call(`/application/nodes`);
-                resolve(res.data.data.map((value: any) => new Node(api, value.attributes)));
+                let res = await api.call(`/application/nodes?page=${page}`);
+                resolve(res.data.data.map((value: any) => new Node(api, value.attributes, res.data.meta)));
             } catch (error) {
                 reject(error);
             }
@@ -176,8 +179,8 @@ class Node extends NodeModel {
         });
     }
 
-    public allocations(): Promise<NodeAllocation[]> {
-        return NodeAllocation.getAll(this.api, this.id);
+    public getAllocations(page?: number): Promise<NodeAllocation[]> {
+        return NodeAllocation.getAll(this.api, this.id, page);
     }
 
     public createAllocations(ip: string, alias: string, ports: string[]): Promise<void> {

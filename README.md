@@ -61,4 +61,4 @@ client.getClientServers()
 
 ## Examples
 
-### [Linking System](https://github.com/RedstoneGamez/Pterodactyl.js/tree/master/examples#)
+### [Linking System](https://github.com/RedstoneGamez/Pterodactyl.js/blob/master/examples/link.js)

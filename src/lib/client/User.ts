@@ -1,13 +1,16 @@
 import AdminAPI from '../AdminAPI';
 
 import UserModel, { UserOptionsRaw, NewUserOptions } from '../models/User';
+import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
 
 class User extends UserModel {
     private api: AdminAPI;
+    public pagination?: Pagination;
 
-    constructor(api: AdminAPI, data: UserOptionsRaw) {
+    constructor(api: AdminAPI, data: UserOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
+        this.pagination = new Pagination(paginationOptions);
     }
 
     public static create(api: AdminAPI, options: NewUserOptions): Promise<User> {
@@ -16,11 +19,11 @@ class User extends UserModel {
         });
     }
 
-    public static getAll(api: AdminAPI): Promise<User[]> {
+    public static getAll(api: AdminAPI, page: number = 1): Promise<User[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await api.call(`/application/users`);
-                resolve(res.data.data.map((value: any) => new User(api, value.attributes)));
+                let res = await api.call(`/application/users?page=${page}`);
+                resolve(res.data.data.map((value: any) => new User(api, value.attributes, res.data.meta)));
             } catch (error) {
                 reject(error);
             }

@@ -79,11 +79,12 @@ declare module 'pterodactyl.js' {
     }
 
     export class ClientServer extends ClientServerModel {
-        constructor(api: UserClient, options: ClientServerOptionsRaw);
+        constructor(api: UserClient, options: ClientServerOptionsRaw, paginationOptions?: PaginationOptionsRaw);
 
         private api: UserClient;
+        public pagination?: Pagination;
 
-        public static getAll(api: UserClient): Promise<ClientServer[]>;
+        public static getAll(api: UserClient, page: number): Promise<ClientServer[]>;
 
         public static getById(api: UserClient, id: string): Promise<ClientServer>;
 
@@ -113,13 +114,14 @@ declare module 'pterodactyl.js' {
     }
 
     export class User extends UserModel {
-        constructor(api: AdminClient, data: UserOptionsRaw);
+        constructor(api: AdminClient, data: UserOptionsRaw, paginationOptions?: PaginationOptionsRaw);
 
         private api: AdminClient;
+        public pagination?: Pagination;
 
         public static create(api: AdminClient, options: NewUserOptions): Promise<User>;
 
-        public static getAll(api: AdminClient): Promise<User[]>;
+        public static getAll(api: AdminClient, page: number): Promise<User[]>;
 
         public static getById(api: AdminClient, id: number): Promise<User>;
 
@@ -145,13 +147,14 @@ declare module 'pterodactyl.js' {
     }
 
     export class Node extends NodeModel {
-        constructor(api: AdminClient, data: NodeOptionsRaw);
+        constructor(api: AdminClient, data: NodeOptionsRaw, paginationOptions?: PaginationOptionsRaw);
 
         private api: AdminClient;
+        public pagination?: Pagination;
 
         public static create(api: AdminClient, options: NewNodeOptions): Promise<Node>;
 
-        public static getAll(api: AdminClient): Promise<Node[]>;
+        public static getAll(api: AdminClient, page: number): Promise<Node[]>;
 
         public static getById(api: AdminClient, id: number): Promise<Node>;
 
@@ -193,13 +196,14 @@ declare module 'pterodactyl.js' {
     }
 
     export class Location extends LocationModel {
-        constructor(api: AdminClient, data: LocationOptionsRaw);
+        constructor(api: AdminClient, data: LocationOptionsRaw, paginationOptions?: PaginationOptionsRaw);
 
         private api: AdminClient;
+        public pagination?: Pagination;
 
         public static create(api: AdminClient, options: NewLocationOptions): Promise<Location>;
 
-        public static getAll(api: AdminClient): Promise<Location[]>;
+        public static getAll(api: AdminClient, page: number): Promise<Location[]>;
 
         public static getById(api: AdminClient, id: number): Promise<Location>;
 
@@ -211,13 +215,14 @@ declare module 'pterodactyl.js' {
     }
 
     export class Server extends ServerModel {
-        constructor(api: AdminClient, data: ServerOptionsRaw);
+        constructor(api: AdminClient, data: ServerOptionsRaw, paginationOptions?: PaginationOptionsRaw);
 
         private api: AdminClient;
+        public pagination?: Pagination;
 
         public static create(api: AdminClient, options: NewServerOptions): Promise<Server>;
 
-        public static getAll(api: AdminClient): Promise<Server[]>;
+        public static getAll(api: AdminClient, page: number): Promise<Server[]>;
 
         public static getById(api: AdminClient, id: number): Promise<Server>;
 
@@ -277,11 +282,12 @@ declare module 'pterodactyl.js' {
     }
 
     export class Nest extends NestModel {
-        constructor(api: AdminClient, data: NestOptionsRaw);
+        constructor(api: AdminClient, data: NestOptionsRaw, paginationOptions?: PaginationOptionsRaw);
 
         private api: AdminClient;
+        public pagination?: Pagination;
 
-        public static getAll(api: AdminClient): Promise<Nest[]>;
+        public static getAll(api: AdminClient, page: number): Promise<Nest[]>;
 
         public static getById(api: AdminClient, id: number): Promise<Nest>;
 
@@ -315,11 +321,12 @@ declare module 'pterodactyl.js' {
     }
 
     export class NodeAllocation extends NodeAllocationModel {
-        constructor(api: AdminClient, data: NodeAllocationOptions);
+        constructor(api: AdminClient, node: number, data: NodeAllocationOptions, paginationOptions?: PaginationOptionsRaw);
 
         private api: AdminClient;
+        public pagination?: Pagination;
 
-        public static getAll(api: AdminClient, node: number): Promise<NodeAllocation[]>;
+        public static getAll(api: AdminClient, node: number, page: number): Promise<NodeAllocation[]>;
     }
 
     export class ClientServerModel implements ClientServerOptions {
@@ -382,6 +389,19 @@ declare module 'pterodactyl.js' {
         public createdAt: Date;
 
         public toJSON(): any;
+    }
+
+    export class Pagination implements PaginationOptions {
+        constructor(data: PaginationOptionsRaw);
+
+        public total: number;
+        public count: number;
+        public pageSize: number;
+        public currentPage: number;
+        public totalPages: number;
+        public links: any[];
+
+        public nextPage(): number;
     }
 
     export class LocationModel implements LocationOptions {
@@ -797,6 +817,26 @@ declare module 'pterodactyl.js' {
         port: number;
         assigned: boolean;
         node: number;
+    }
+
+    interface PaginationOptions {
+        total: number;
+        count: number;
+        pageSize: number;
+        currentPage: number;
+        totalPages: number;
+        links: any[];
+    }
+
+    interface PaginationOptionsRaw {
+        pagination: {
+            total: number;
+            count: number;
+            per_page: number;
+            current_page: number;
+            total_pages: number;
+            links: any[];
+        };
     }
 
     interface NewServerOptions {

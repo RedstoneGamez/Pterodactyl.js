@@ -3,21 +3,23 @@ import AdminAPI from '../AdminAPI';
 import Egg from './Egg';
 
 import NestModel, { NestOptionsRaw } from '../models/Nest';
+import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
 
 class Nest extends NestModel {
     private api: AdminAPI;
-    public eggs: Egg[];
+    public pagination?: Pagination;
 
-    constructor(api: AdminAPI, data: NestOptionsRaw) {
+    constructor(api: AdminAPI, data: NestOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
+        this.pagination = new Pagination(paginationOptions);
     }
 
-    public static getAll(api: AdminAPI): Promise<Nest[]> {
+    public static getAll(api: AdminAPI, page: number = 1): Promise<Nest[]> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await api.call(`/application/nests`);
-                resolve(res.data.data.map((value: any) => new Nest(api, value.attributes)));
+                let res = await api.call(`/application/nests?page=${page}`);
+                resolve(res.data.data.map((value: any) => new Nest(api, value.attributes, res.data.meta)));
             } catch (error) {
                 reject(error);
             }
