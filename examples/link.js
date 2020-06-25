@@ -7,22 +7,20 @@ const client = new Pterodactyl.Builder()
 
 let isAccountCredentials = ( username, email ) => {
     return new Promise( ( resolve, reject ) => {
-        client.getUsers()
-            .then( async users => {
-                let user = users.filter( user => user.username === username );
+        try {
+            let users = await client.getUsers();
+            let user = users.filter( user => user.username === username );
 
-                if ( user ) {
-                    let info = await user.getInfo();
+            if ( !user ) return resolve( { correct: false, } );
 
-                    if ( info.email === email ) {
-                        resolve( { correct: true, user } );
-                    } else {
-                        resolve( { correct: false } );
-                    }
-                } else {
-
-                }
-            } ).catch( error => reject( error ) );
+            if ( user.email ) {
+                resolve( { correct: true, user, } );
+            } else {
+                resolve( { correct: false, } );
+            }
+        } catch ( error ) {
+            reject( error );
+        }
     } );
 };
 
