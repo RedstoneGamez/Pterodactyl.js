@@ -9,7 +9,7 @@ declare module 'pterodactyl.js' {
 
         public setAPIKey(apiKey: string): Builder;
 
-        private build(): Promise<boolean>;
+        private build(): boolean;
 
         public asUser(): UserClient;
 

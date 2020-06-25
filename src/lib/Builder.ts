@@ -1,7 +1,7 @@
 import UserAPI from './UserAPI';
 import AdminAPI from './AdminAPI';
 
-class PterodactylClientBuilder {
+class ClientBuilder {
     private url: string;
     private apiKey: string;
 
@@ -10,17 +10,17 @@ class PterodactylClientBuilder {
         this.apiKey = apiKey;
     }
 
-    public setURL(url: string): PterodactylClientBuilder {
+    public setURL(url: string): ClientBuilder {
         this.url = url;
         return this;
     }
 
-    public setAPIKey(apiKey: string): PterodactylClientBuilder {
+    public setAPIKey(apiKey: string): ClientBuilder {
         this.apiKey = apiKey;
         return this;
     }
 
-    private build(): boolean | Error {
+    private build(): boolean {
         if (this.url && this.apiKey) {
             return true;
         } else {
@@ -47,4 +47,4 @@ class PterodactylClientBuilder {
     }
 }
 
-export default PterodactylClientBuilder;
+export default ClientBuilder;

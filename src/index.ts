@@ -1,7 +1,7 @@
-import APIBuilder from './lib/Builder';
+import Builder from './lib/Builder';
 
-import AdminPterodactylAPI from './lib/AdminAPI';
-import UserPterodactylAPI from './lib/UserAPI';
+import AdminClient from './lib/AdminAPI';
+import UserClient from './lib/UserAPI';
 
 import User from './lib/client/User';
 import Node from './lib/client/Node';
@@ -9,6 +9,9 @@ import Location from './lib/client/Location';
 import Server from './lib/client/Server';
 import Nest from './lib/client/Nest';
 import Egg from './lib/client/Egg';
+
+import NodeAllocation from './lib/client/NodeAllocation';
+import ServerDatabase from './lib/client/ServerDatabase';
 
 import ClientServerModel from './lib/models/ClientServer';
 import UserModel from './lib/models/User';
@@ -19,10 +22,10 @@ import NestModel from './lib/models/Nest';
 import EggModel from './lib/models/Egg';
 
 export {
-    APIBuilder as Builder,
+    Builder,
 
-    AdminPterodactylAPI as AdminClient,
-    UserPterodactylAPI as UserClient,
+    AdminClient,
+    UserClient,
 
     User,
     Node,
@@ -31,11 +34,14 @@ export {
     Nest,
     Egg,
 
+    NodeAllocation,
+    ServerDatabase,
+
     ClientServerModel,
     UserModel,
     NodeModel,
     LocationModel,
     ServerModel,
     NestModel,
-    EggModel
+    EggModel,
 };
