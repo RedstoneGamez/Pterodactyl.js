@@ -12,7 +12,7 @@ class Nest extends NestModel {
     constructor(api: AdminAPI, data: NestOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
-        this.pagination = new Pagination(paginationOptions);
+        if (paginationOptions) this.pagination = new Pagination(paginationOptions);
     }
 
     public static getAll(api: AdminAPI, page: number = 1): Promise<Nest[]> {

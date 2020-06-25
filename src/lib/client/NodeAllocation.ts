@@ -10,7 +10,7 @@ class NodeAllocation extends NodeAllocationModel {
     constructor(api: AdminAPI, node: number, data: NodeAllocationOptions, paginationOptions?: PaginationOptionsRaw) {
         super(data, node);
         this.api = api;
-        this.pagination = new Pagination(paginationOptions);
+        if (paginationOptions) this.pagination = new Pagination(paginationOptions);
     }
 
     public static getAll(api: AdminAPI, node: number, page: number = 1): Promise<NodeAllocation[]> {

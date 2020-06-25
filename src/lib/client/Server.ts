@@ -11,7 +11,7 @@ class Server extends ServerModel {
     constructor(api: AdminAPI, data: ServerOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
-        this.pagination = new Pagination(paginationOptions);
+        if (paginationOptions) this.pagination = new Pagination(paginationOptions);
     }
 
     public static create(api: AdminAPI, options: NewServerOptions): Promise<Server> {

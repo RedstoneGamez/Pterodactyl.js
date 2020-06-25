@@ -11,7 +11,7 @@ class Node extends NodeModel {
     constructor(api: AdminAPI, data: NodeOptionsRaw, paginationOptions?: PaginationOptionsRaw) {
         super(data);
         this.api = api;
-        this.pagination = new Pagination(paginationOptions);
+        if (paginationOptions) this.pagination = new Pagination(paginationOptions);
     }
 
     public static create(api: AdminAPI, options: NewNodeOptions): Promise<Node> {
