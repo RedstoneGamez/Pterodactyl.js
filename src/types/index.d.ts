@@ -73,7 +73,7 @@ declare module 'pterodactyl.js' {
 
         public testConnection(): Promise<any>;
 
-        public getClientServers(): Promise<ClientServerModel[]>;
+        public getClientServers(): Promise<ClientServer[]>;
 
         public getClientServer(serverId: string): Promise<ClientServer>;
     }

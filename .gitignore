@@ -4,5 +4,6 @@ node_modules/
 
 dist/
 test/
+test2/
 
 src/test.ts
