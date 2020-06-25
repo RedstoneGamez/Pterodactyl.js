@@ -2,13 +2,13 @@ import axios, { AxiosResponse } from 'axios';
 
 const packageJson = require('../package.json');
 
-interface PterodactylAPIVars {
+interface PterodactylAPIOptions {
     url: string;
     baseUrl: string;
     apiKey: string;
 }
 
-class PterodactylJS implements PterodactylAPIVars {
+class PterodactylAPI implements PterodactylAPIOptions {
     public url: string;
     public baseUrl: string;
     public apiKey: string;
@@ -65,15 +65,16 @@ class PterodactylJS implements PterodactylAPIVars {
         });
     }
 
-    private handleError(error: any) {
+    private handleError(error: any): any {
         if (error.code === 'ENOTFOUND') {
             console.log('Panel URL Not Found!');
             return error;
         }
 
-        console.log(error);
+        // console.log(error);
+        return error;
 
     }
 }
 
-export default PterodactylJS;
+export default PterodactylAPI;

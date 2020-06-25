@@ -68,6 +68,61 @@ interface ServerContainerRaw {
     environment: any;
 }
 
+interface ServerDetailsRequestOptions {
+    external_id?: string;
+    name: string;
+    user: number;
+    description?: string;
+}
+
+interface ServerBuildConfigRequestOptions {
+    allocation: number;
+    oom_disabled?: boolean;
+    limits?: ServerLimits;
+    add_allocations?: Array<number>;
+    remove_allocations?: Array<number>;
+    feature_limits: ServerFeatureLimits;
+}
+
+interface ServerStartupRequestOptions {
+    startup: string;
+    environment?: Array<string>;
+    egg: number;
+    pack?: number;
+    image: string;
+    skip_scripts?: boolean;
+}
+
+interface NewServerOptions {
+    externalId?: string;
+    name: string;
+    user: number;
+    description?: string;
+    egg: number;
+    pack?: number;
+    image?: string;
+    startup: string;
+    limits: ServerLimits;
+    featureLimits: ServerFeatureLimits;
+    environment: {
+        [key: string]: any;
+    };
+    allocation?: {
+        default?: number;
+        additional: number[];
+    };
+    deploy?: {
+        locations?: number[];
+        dedicatedIp: boolean;
+        portRange: any[];
+    };
+    startWhenInstalled?: boolean;
+    skipScripts?: boolean;
+    outOfMemoryKiller?: boolean;
+}
+
+export { ServerOptions, ServerOptionsRaw, ServerLimits, ServerFeatureLimits, ServerContainer, ServerContainerRaw, ServerDetailsRequestOptions, ServerBuildConfigRequestOptions, ServerStartupRequestOptions, NewServerOptions };
+
 class Server implements ServerOptions {
     public id: number;
     public externalId: any;

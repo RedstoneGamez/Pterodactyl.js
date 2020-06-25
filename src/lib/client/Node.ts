@@ -1,143 +1,194 @@
-import PterodactylAPI from '../index';
+import AdminAPI from '../AdminAPI';
 
-import NodeModel from '../models/Node';
+import NodeModel, { NodeOptionsRaw, NewNodeOptions } from '../models/Node';
+import NodeAllocation from './NodeAllocation';
 
-interface NodeOptions {
-    id: number;
-    public: boolean;
-    name: string;
-    description: string;
-    locationId: number;
-    fqdn: string;
-    scheme: string;
-    behindProxy: string;
-    maintenanceMode: string;
-    memory: number;
-    memoryOverAllocate: number;
-    disk: number;
-    diskOverAllocate: number;
-    uploadSize: number;
-    daemonListen: number;
-    daemonSftp: number;
-    daemonBase: string;
-    updatedAt: Date;
-    createdAt: Date;
-}
+class Node extends NodeModel {
+    private api: AdminAPI;
 
-/**
- * @todo
- * 
- * - GET/POST/DELETE Allocations
- */
-
-class Node {
-    private api: PterodactylAPI;
-    private nodeId: string;
-
-    constructor(api: PterodactylAPI, nodeId: string) {
+    constructor(api: AdminAPI, data: NodeOptionsRaw) {
+        super(data);
         this.api = api;
-        this.nodeId = nodeId;
     }
 
-    public getInfo(): Promise<NodeOptions> {
+    public static create(api: AdminAPI, options: NewNodeOptions): Promise<Node> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/nodes/${this.nodeId}`).then(res => resolve(new NodeModel(res.data.attributes))).catch(error => reject(error));
+            api.call(`/application/nodes`, 'POST', this.getCreateOptions(options)).then(res => resolve(new Node(api, res.data.attributes))).catch(error => reject(error));
         });
     }
 
-    // public setPublic(bool: boolean): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { public: bool }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+    public static getAll(api: AdminAPI): Promise<Node[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/nodes`);
+                resolve(res.data.data.map((value: any) => new Node(api, value.attributes)));
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 
-    // public setName(name: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { name }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+    public static getById(api: AdminAPI, id: number): Promise<Node> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/nodes/${id}`);
+                resolve(new Node(api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 
-    // public setDescription(description: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { description }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+    private static getCreateOptions(options: NewNodeOptions) {
+        let opts: any = {
+            name: options.name,
+            description: options.description,
+            location_id: options.locationId,
+            public: options.public,
+            fqdn: options.fqdn,
+            scheme: options.scheme,
+            behind_proxy: options.behindProxy,
+            memory: options.memory,
+            memory_overallocate: options.memoryOverAllocate,
+            disk: options.disk,
+            disk_overallocate: options.diskOverAllocate,
+            daemon_base: options.daemonBase,
+            daemon_listen: options.daemonPort,
+            daemon_sftp: options.daemonSftpPort,
+            maintenance_mode: options.maintenanceMode,
+            upload_size: options.uploadSize,
+        };
 
-    // public setLocation(locationId: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { location_id: locationId }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+        return opts;
+    }
 
-    // public setFQDN(fqdn: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { fqdn }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+    private getRequestObject(data: any) {
+        let request = {
+            name: this.name,
+            location_id: this.locationId,
+            fqdn: this.fqdn,
+            scheme: this.scheme,
+            memory: this.memory,
+            memory_overallocate: this.memoryOverAllocate,
+            disk: this.disk,
+            disk_overallocate: this.diskOverAllocate,
+            daemon_sftp: this.daemonSftp,
+            daemon_listen: this.daemonListen,
+        };
 
-    // public setScheme(scheme: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { scheme }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+        return Object.assign(request, data);
+    }
 
-    // public setBehindProxy(behindProxy: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { behind_proxy: behindProxy }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setMaintenanceMode(maintenanceMode: boolean): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { maintenance_mode: maintenanceMode }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setMemory(memory: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { memory }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setMemoryOverAllocate(memoryOverAllocate: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { memory_overallocate: memoryOverAllocate }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setDisk(disk: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { disk }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setDiskOverAllocate(diskOverAllocate: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { disk_overallocate: diskOverAllocate }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setDaemonListen(port: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { daemon_listen: port }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setDaemonSftp(port: number): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { daemon_sftp: port }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    // public setDaemonBase(daemonBase: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/nodes/${this.nodeId}`, 'PATCH', { daemon_base: daemonBase }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
-
-    public delete(): Promise<any> {
+    public setPublic(isPublic: boolean): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/nodes/${this.nodeId}`, 'DELETE').then(res => resolve(res.data.attributes)).catch(error => reject(error));
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ public: isPublic })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setName(name: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ name })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setDescription(description: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ description })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+
+    }
+
+    public setLocation(locationId: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ location_id: locationId })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setFQDN(fqdn: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ fqdn })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setScheme(scheme: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ scheme })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setBehindProxy(behindProxy: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ behind_proxy: behindProxy })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setMaintenanceMode(maintenanceMode: boolean): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ maintenance_mode: maintenanceMode })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setUploadSize(size: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ upload_size: size })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setMemory(memory: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ memory })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setMemoryOverAllocate(memoryOverAllocate: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ memory_overallocate: memoryOverAllocate })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setDisk(disk: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ disk })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setDiskOverAllocate(diskOverAllocate: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ disk_overallocate: diskOverAllocate })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setDaemonPort(port: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ daemon_listen: port })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setDaemonSftpPort(port: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ daemon_sftp: port })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public setDaemonBase(baseDirectory: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'PATCH', this.getRequestObject({ daemon_base: baseDirectory })).then(res => resolve(res.data.attributes)).catch(error => reject(error));
+        });
+    }
+
+    public allocations(): Promise<NodeAllocation[]> {
+        return NodeAllocation.getAll(this.api, this.id);
+    }
+
+    public createAllocations(ip: string, alias: string, ports: string[]): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}/allocations`, 'PATCH', { ip, alias, ports }).then(res => resolve()).catch(error => reject(error));
+        });
+    }
+
+    public delete(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/nodes/${this.id}`, 'DELETE').then(res => resolve()).catch(error => reject(error));
         });
     }
 }

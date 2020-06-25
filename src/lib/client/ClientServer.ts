@@ -1,120 +1,107 @@
 import PterodactylAPI from '../index';
 
-import ClientServerModel from '../models/ClientServer';
+import ClientServerModel, { ServerOptionsRaw, } from '../models/ClientServer';
 
-interface ServerLimits {
-    memory: number;
-    swap: number;
-    disk: number;
-    io: number;
-    cpu: number;
+interface UtilizationData {
+    used: number;
+    total: number;
 }
 
-interface ServerFeatureLimits {
-    databases: number;
-    allocations: number;
-}
-
-interface ClientServerOptions {
-    serverOwner: boolean;
-    identifier: string;
-    internalId: string;
-    uuid: string;
-    name: string;
-    description: string;
-    limits: ServerLimits;
-    featureLimits: ServerFeatureLimits;
-}
-
-/**
- * @todo
- * - Update Server Details //
- * - Update Startup Config //
- * 
- * - GET Databases
- * - GET Database
- * - DELETE Database
- * 
- */
-
-class ClientServer {
+class ClientServer extends ClientServerModel {
     private api: PterodactylAPI;
-    private serverId: string;
 
-    constructor(api: PterodactylAPI, serverId: string) {
+    constructor(api: PterodactylAPI, options: ServerOptionsRaw) {
+        super(options);
         this.api = api;
-        this.serverId = serverId;
     }
 
-    public getInfo(): Promise<ClientServerOptions> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}`).then(res => resolve(new ClientServerModel(res.data.attributes))).catch(error => reject(error));
+    public static getAll(api: PterodactylAPI): Promise<ClientServer[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/client`);
+                resolve(res.data.data.map((value: any) => new ClientServer(api, value.attributes)));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public cpuUsage(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve({ used: res.data.attributes.cpu.current, total: res.data.attributes.cpu.limit })).catch(error => reject(error));
+    public static getById(api: PterodactylAPI, id: string): Promise<ClientServer> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/client/servers/${id}`);
+                resolve(new ClientServer(api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public diskUsage(): Promise<any> {
+    public cpuUsage(): Promise<UtilizationData> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve({ used: res.data.attributes.disk.current, total: res.data.attributes.disk.limit })).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve({ used: res.data.attributes.cpu.current, total: res.data.attributes.cpu.limit })).catch(error => reject(error));
         });
     }
 
-    public memoryUsage(): Promise<any> {
+    public diskUsage(): Promise<UtilizationData> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve({ used: res.data.attributes.memory.current, total: res.data.attributes.memory.limit })).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve({ used: res.data.attributes.disk.current, total: res.data.attributes.disk.limit })).catch(error => reject(error));
+        });
+    }
+
+    public memoryUsage(): Promise<UtilizationData> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve({ used: res.data.attributes.memory.current, total: res.data.attributes.memory.limit })).catch(error => reject(error));
         });
     }
 
     public powerState(): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/utilization`).then(res => resolve(res.data.attributes.state)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve(res.data.attributes.state)).catch(error => reject(error));
         });
     }
 
-    public start(): Promise<any> {
+    public powerAction(signal: 'start' | 'stop' | 'restart' | 'kill'): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'start' }).then(res => resolve(res.data)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal }).then(res => resolve()).catch(error => reject(error));
         });
     }
 
-    public stop(): Promise<any> {
+    public start(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'stop' }).then(res => resolve(res.data)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'start' }).then(res => resolve()).catch(error => reject(error));
         });
     }
 
-    public restart(): Promise<any> {
+    public stop(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'restart' }).then(res => resolve(res.data)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'stop' }).then(res => resolve()).catch(error => reject(error));
         });
     }
 
-    public kill(): Promise<any> {
+    public restart(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/power`, 'POST', { signal: 'kill' }).then(res => resolve(res.data)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'restart' }).then(res => resolve()).catch(error => reject(error));
         });
     }
 
-    public databaseAmount(): Promise<number> {
+    public kill(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.getInfo().then(info => resolve(info.featureLimits.databases)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'kill' }).then(res => resolve()).catch(error => reject(error));
         });
     }
 
-    public allocationsAmount(): Promise<number> {
-        return new Promise((resolve, reject) => {
-            this.getInfo().then(info => resolve(info.featureLimits.allocations)).catch(error => reject(error));
-        });
+    public databases(): Promise<number> {
+        return Promise.resolve(this.featureLimits.databases);
     }
 
-    public sendCommand(command: string): Promise<any> {
+    public allocations(): Promise<number> {
+        return Promise.resolve(this.featureLimits.allocations);
+    }
+
+    public sendCommand(command: string): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.serverId}/command`, 'POST', { command }).then(res => resolve(res.data)).catch(error => reject(error));
+            this.api.call(`/client/servers/${this.identifier}/command`, 'POST', { command }).then(res => resolve()).catch(error => reject(error));
         });
     }
 }

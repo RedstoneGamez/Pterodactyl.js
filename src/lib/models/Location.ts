@@ -14,6 +14,13 @@ interface LocationOptionsRaw {
     created_at: string;
 }
 
+interface NewLocationOptions {
+    shortCode: string;
+    description: string;
+}
+
+export { LocationOptions, LocationOptionsRaw, NewLocationOptions };
+
 class Location implements LocationOptions {
     public id: number;
     public shortCode: string;

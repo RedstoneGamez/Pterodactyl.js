@@ -30,6 +30,19 @@ interface UserOptionsRaw {
     created_at: string;
 }
 
+interface NewUserOptions {
+    externalId?: string;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    password?: string;
+    admin?: boolean;
+    language?: string;
+}
+
+export { UserOptions, UserOptionsRaw, NewUserOptions };
+
 class User implements UserOptions {
     public id: number;
     public externalId: any;

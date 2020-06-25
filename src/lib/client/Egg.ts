@@ -1,36 +1,34 @@
-import PterodactylAPI from '../index';
+import AdminAPI from '../AdminAPI';
 
-import EggModel from '../models/Egg';
+import EggModel, { EggOptionsRaw } from '../models/Egg';
 
-interface EggOptions {
-    id: number;
-    uuid: string;
-    internalId: string;
-    nest: number;
-    author: string;
-    description: string;
-    dockerImage: string;
-    config: any;
-    startup: string;
-    script: any;
-    updatedAt: Date;
-    createdAt: Date;
-}
+class Egg extends EggModel {
+    private api: AdminAPI;
 
-class Egg {
-    private api: PterodactylAPI;
-    private nestId: string;
-    private eggId: string;
-
-    constructor(api: PterodactylAPI, nestId: string, eggId: string) {
+    constructor(api: AdminAPI, data: EggOptionsRaw) {
+        super(data);
         this.api = api;
-        this.nestId = nestId;
-        this.eggId = eggId;
     }
 
-    public getInfo(): Promise<EggOptions> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/nests/${this.nestId}/eggs/${this.eggId}`).then(res => resolve(new EggModel(res.data.attributes))).catch(error => reject(error));
+    public static getAll(api: AdminAPI, nest: number): Promise<Egg[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/nests/${nest}/eggs`);
+                resolve(res.data.data.map((value: any) => new Egg(api, value.attributes)));
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    public static async getById(api: AdminAPI, nest: number, id: number): Promise<Egg> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/nests/${nest}/eggs/${id}`);
+                resolve(new Egg(api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 }

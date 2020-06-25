@@ -1,53 +1,59 @@
-import PterodactylAPI from '../index';
+import AdminAPI from '../AdminAPI';
 
 import Egg from './Egg';
 
-import NestModel from '../models/Nest';
-import EggModel from '../models/Egg';
+import NestModel, { NestOptionsRaw } from '../models/Nest';
 
-interface NestOptions {
-    id: number;
-    uuid: string;
-    internalId: string;
-    author: string;
-    name: string;
-    description: string;
-    updatedAt: Date;
-    createdAt: Date;
-}
+class Nest extends NestModel {
+    private api: AdminAPI;
+    public eggs: Egg[];
 
-class Nest {
-    private api: PterodactylAPI;
-    private nestId: string;
-
-    constructor(api: PterodactylAPI, nestId: string) {
+    constructor(api: AdminAPI, data: NestOptionsRaw) {
+        super(data);
         this.api = api;
-        this.nestId = nestId;
     }
 
-    public getInfo(): Promise<NestOptions> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/nests/${this.nestId}`).then(res => resolve(new NestModel(res.data.attributes))).catch(error => reject(error));
+    public static getAll(api: AdminAPI): Promise<Nest[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/nests`);
+                resolve(res.data.data.map((value: any) => new Nest(api, value.attributes)));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public getEggs(): Promise<EggModel[]> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/nests/${this.nestId}/eggs`).then(res => {
-                let data: EggModel[] = [];
-
-                res.data.data.forEach((element: any) => {
-                    data.push(new EggModel(element.attributes));
-                });
-
-                return data;
-            }).catch(error => reject(error));
+    public static getById(api: AdminAPI, id: number): Promise<Nest> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/nests/${id}`);
+                resolve(new Nest(api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public getEgg(eggId: string): Promise<Egg> {
-        return new Promise((resolve, reject) => {
-            resolve(new Egg(this.api, this.nestId, eggId));
+    public getEggs(): Promise<Egg[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let data = await Egg.getAll(this.api, this.id);
+                resolve(data);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    public getEgg(eggId: number): Promise<Egg> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let data = await Egg.getById(this.api, this.id, eggId);
+                resolve(data);
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 }

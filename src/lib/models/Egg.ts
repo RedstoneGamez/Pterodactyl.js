@@ -27,6 +27,8 @@ interface EggOptionsRaw {
     created_at: string;
 }
 
+export { EggOptions, EggOptionsRaw };
+
 class Egg implements EggOptions {
     public id: number;
     public uuid: string;

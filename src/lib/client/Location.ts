@@ -1,47 +1,69 @@
-import PterodactylAPI from '../index';
+import AdminAPI from '../AdminAPI';
 
-import LocationModel from '../models/Location';
+import LocationModel, { LocationOptionsRaw, NewLocationOptions } from '../models/Location';
 
-interface LocationOptions {
-    id: number;
-    shortCode: string;
-    description: string;
-    updatedAt: Date;
-    createdAt: Date;
-}
+class Location extends LocationModel {
+    private api: AdminAPI;
 
-/**
- * @todo
- * - DELETE
- * 
- */
-
-class Location {
-    private api: PterodactylAPI;
-    private locationId: string;
-
-    constructor(api: PterodactylAPI, locationId: string) {
+    constructor(api: AdminAPI, data: LocationOptionsRaw) {
+        super(data);
         this.api = api;
-        this.locationId = locationId;
     }
 
-    public getInfo(): Promise<LocationOptions> {
+    public static create(api: AdminAPI, options: NewLocationOptions): Promise<Location> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/locations/${this.locationId}`).then(res => resolve(new LocationModel(res.data.attributes))).catch(error => reject(error));
+            api.call(`/application/locations`, 'POST', options).then(res => resolve(new Location(api, res.data.attributes))).catch(error => reject(error));
         });
     }
 
-    // public setShortCode(shortCode: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/locations/${this.locationId}`, 'PATCH', { short: shortCode }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+    public static getAll(api: AdminAPI): Promise<Location[]> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/locations`);
+                resolve(res.data.data.map((value: any) => new Location(api, value.attributes)));
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 
-    // public setDescription(description: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         this.api.call(`/application/locations/${this.locationId}`, 'PATCH', { long: description }).then(res => resolve(res.data.attributes)).catch(error => reject(error));
-    //     });
-    // }
+    public static getById(api: AdminAPI, id: number): Promise<Location> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/locations/${id}`);
+                resolve(new Location(api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    private getRequestObject(data: any) {
+        let request = {
+            short: this.shortCode,
+            long: this.description,
+        };
+
+        return Object.assign(request, data);
+    }
+
+    public setShortCode(shortCode: string): Promise<Location> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/locations/${this.id}`, 'PATCH', this.getRequestObject({ short: shortCode })).then(res => resolve(new Location(this.api, res.data.attributes))).catch(error => reject(error));
+        });
+    }
+
+    public setDescription(description: string): Promise<Location> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/locations/${this.id}`, 'PATCH', this.getRequestObject({ long: description })).then(res => resolve(new Location(this.api, res.data.attributes))).catch(error => reject(error));
+        });
+    }
+
+    public delete(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.api.call(`/application/locations/${this.id}`, 'DELETE').then(res => resolve()).catch(error => reject(error));
+        });
+    }
 }
 
 export default Location;

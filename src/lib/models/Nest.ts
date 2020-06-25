@@ -19,6 +19,8 @@ interface NestOptionsRaw {
     created_at: string;
 }
 
+export { NestOptions, NestOptionsRaw };
+
 class Nest implements NestOptions {
     public id: number;
     public uuid: string;

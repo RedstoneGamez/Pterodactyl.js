@@ -2,10 +2,6 @@ import PterodactylJS from './index';
 
 import ClientServer from './client/ClientServer';
 
-import ClientServerModel from './models/ClientServer';
-
-// const packageJson = require('./package.json');
-
 class UserPterodactylAPI extends PterodactylJS {
     constructor(url: string, apiKey: string) {
         super(url, apiKey);
@@ -22,7 +18,7 @@ class UserPterodactylAPI extends PterodactylJS {
         };
 
         return new Promise((resolve, reject) => {
-            this.call('/client/servers').then(res => {
+            this.call('/client').then(res => {
                 let error = null;
 
                 if (res.status !== 200) {
@@ -38,24 +34,12 @@ class UserPterodactylAPI extends PterodactylJS {
         });
     }
 
-    public getClientServers(): Promise<ClientServerModel[]> {
-        return new Promise((resolve, reject) => {
-            this.call(`/application/users`).then(res => {
-                let data: ClientServerModel[] = [];
-
-                res.data.data.forEach((element: any) => {
-                    data.push(new ClientServerModel(element.attributes));
-                });
-
-                resolve(data);
-            }).catch(error => reject(error));
-        });
+    public getClientServers(): Promise<ClientServer[]> {
+        return ClientServer.getAll(this);
     }
 
     public getClientServer(serverId: string): Promise<ClientServer> {
-        return new Promise((resolve, reject) => {
-            resolve(new ClientServer(this, serverId));
-        });
+        return ClientServer.getById(this, serverId);
     }
 }
 

@@ -42,6 +42,27 @@ interface NodeOptionsRaw {
     created_at: string;
 }
 
+interface NewNodeOptions {
+    name: string;
+    description?: string;
+    locationId: number;
+    public?: boolean;
+    fqdn: string;
+    scheme: string;
+    behindProxy: string;
+    maintenanceMode: string;
+    memory: number;
+    memoryOverAllocate: number;
+    disk: number;
+    diskOverAllocate: number;
+    uploadSize: number;
+    daemonPort: number;
+    daemonSftpPort: number;
+    daemonBase: string;
+}
+
+export { NodeOptions, NodeOptionsRaw, NewNodeOptions };
+
 class Node implements NodeOptions {
     public id: number;
     public public: boolean;

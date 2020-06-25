@@ -1,7 +1,7 @@
 import UserAPI from './UserAPI';
 import AdminAPI from './AdminAPI';
 
-class PterodactylAPIBuilder {
+class PterodactylClientBuilder {
     private url: string;
     private apiKey: string;
 
@@ -10,12 +10,12 @@ class PterodactylAPIBuilder {
         this.apiKey = apiKey;
     }
 
-    public setURL(url: string): PterodactylAPIBuilder {
+    public setURL(url: string): PterodactylClientBuilder {
         this.url = url;
         return this;
     }
 
-    public setAPIKey(apiKey: string): PterodactylAPIBuilder {
+    public setAPIKey(apiKey: string): PterodactylClientBuilder {
         this.apiKey = apiKey;
         return this;
     }
@@ -24,31 +24,27 @@ class PterodactylAPIBuilder {
         if (this.url && this.apiKey) {
             return true;
         } else {
-            let error = new Error('Please provide both a URL and API Key to the Client Builder.');
-
-            return error;
+            throw new Error('Please provide both a URL and API Key to the client builder.');
         }
     }
 
     public asUser(): UserAPI {
-        let built = this.build();
-
-        if (typeof built === 'boolean') {
+        try {
+            this.build();
             return new UserAPI(this.url, this.apiKey);
-        } else {
-            throw built;
+        } catch (error) {
+            throw error;
         }
     }
 
     public asAdmin(): AdminAPI {
-        let built = this.build();
-
-        if (typeof built === 'boolean') {
+        try {
+            this.build();
             return new AdminAPI(this.url, this.apiKey);
-        } else {
-            throw built;
+        } catch (error) {
+            throw error;
         }
     }
 }
 
-export default PterodactylAPIBuilder;
+export default PterodactylClientBuilder;

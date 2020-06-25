@@ -7,13 +7,10 @@ import Server from './client/Server';
 import Nest from './client/Nest';
 import Egg from './client/Egg';
 
-import UserModel from './models/User';
-import NodeModel from './models/Node';
-import LocationModel from './models/Location';
-import ServerModel from './models/Server';
-import NestModel from './models/Nest';
-
-// const packageJson = require('./package.json');
+import { NewServerOptions } from './models/Server';
+import { NewUserOptions } from './models/User';
+import { NewLocationOptions } from './models/Location';
+import { NewNodeOptions } from './models/Node';
 
 class AdminPterodactylAPI extends PterodactylJS {
     constructor(url: string, apiKey: string) {
@@ -47,111 +44,64 @@ class AdminPterodactylAPI extends PterodactylJS {
         });
     }
 
-    public getUsers(): Promise<UserModel[]> {
-        return new Promise((resolve, reject) => {
-            this.call(`/application/users`).then(res => {
-                let data: UserModel[] = [];
-
-                res.data.data.forEach((element: any) => {
-                    data.push(new UserModel(element.attributes));
-                });
-
-                resolve(data);
-            }).catch(error => reject(error));
-        });
+    public getUsers(): Promise<User[]> {
+        return User.getAll(this);
     }
 
-    public getNodes(): Promise<NodeModel[]> {
-        return new Promise((resolve, reject) => {
-            this.call(`/application/nodes`).then(res => {
-                let data: NodeModel[] = [];
-
-                res.data.data.forEach((element: any) => {
-                    data.push(new NodeModel(element.attributes));
-                });
-
-                resolve(data);
-            }).catch(error => reject(error));
-        });
+    public getNodes(): Promise<Node[]> {
+        return Node.getAll(this);
     }
 
-    public getLocations(): Promise<LocationModel[]> {
-        return new Promise((resolve, reject) => {
-            this.call(`/application/locations`).then(res => {
-                let data: LocationModel[] = [];
-
-                res.data.data.forEach((element: any) => {
-                    data.push(new LocationModel(element.attributes));
-                });
-
-                resolve(data);
-            }).catch(error => reject(error));
-        });
+    public getLocations(): Promise<Location[]> {
+        return Location.getAll(this);
     }
 
-    public getServers(): Promise<ServerModel[]> {
-        return new Promise((resolve, reject) => {
-            this.call(`/application/servers`).then(async res => {
-                let data: ServerModel[] = [];
-
-                await res.data.data.forEach(async (element: any) => {
-
-                    await data.push(new ServerModel(element.attributes));
-                });
-
-                resolve(data);
-            }).catch(error => reject(error));
-        });
+    public getServers(): Promise<Server[]> {
+        return Server.getAll(this);
     }
 
-    public getNests(): Promise<NestModel[]> {
-        return new Promise((resolve, reject) => {
-            this.call(`/application/nests`).then(res => {
-                let data: NestModel[] = [];
-
-                res.data.data.forEach((element: any) => {
-                    data.push(new NestModel(element.attributes));
-                });
-
-                resolve(data);
-            }).catch(error => reject(error));
-        });
+    public getNests(): Promise<Nest[]> {
+        return Nest.getAll(this);
     }
 
-    public getUser(userId: string): Promise<User> {
-        return new Promise((resolve, reject) => {
-            resolve(new User(this, userId));
-        });
+    public getUser(userId: number): Promise<User> {
+        return User.getById(this, userId);
     }
 
-    public getNode(nodeId: string): Promise<Node> {
-        return new Promise((resolve, reject) => {
-            resolve(new Node(this, nodeId));
-        });
+    public getNode(nodeId: number): Promise<Node> {
+        return Node.getById(this, nodeId);
     }
 
-    public getLocation(locationId: string): Promise<Location> {
-        return new Promise((resolve, reject) => {
-            resolve(new Location(this, locationId));
-        });
+    public getLocation(locationId: number): Promise<Location> {
+        return Location.getById(this, locationId);
     }
 
-    public getServer(serverId: string): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            resolve(new Server(this, serverId));
-        });
+    public getServer(serverId: number): Promise<Server> {
+        return Server.getById(this, serverId);
     }
 
-    public getNest(nestId: string): Promise<Nest> {
-        return new Promise((resolve, reject) => {
-            resolve(new Nest(this, nestId));
-        });
+    public getNest(nestId: number): Promise<Nest> {
+        return Nest.getById(this, nestId);
     }
 
-    public getEgg(nestId: string, eggId: string): Promise<Egg> {
-        return new Promise((resolve, reject) => {
-            resolve(new Egg(this, nestId, eggId));
-        });
+    public getEgg(nestId: number, eggId: number): Promise<Egg> {
+        return Egg.getById(this, nestId, eggId);
+    }
+
+    public createServer(options: NewServerOptions): Promise<Server> {
+        return Server.create(this, options);
+    }
+
+    public createUser(options: NewUserOptions): Promise<User> {
+        return User.create(this, options);
+    }
+
+    public createLocation(options: NewLocationOptions): Promise<Location> {
+        return Location.create(this, options);
+    }
+
+    public createNode(options: NewNodeOptions): Promise<Node> {
+        return Node.create(this, options);
     }
 }
 

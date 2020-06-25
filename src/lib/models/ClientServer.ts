@@ -32,6 +32,8 @@ interface ServerFeatureLimits {
     allocations: number;
 }
 
+export { ServerOptions, ServerOptionsRaw, ServerLimits, ServerFeatureLimits };
+
 class ClientServer implements ServerOptions {
     public serverOwner: boolean;
     public identifier: string;
