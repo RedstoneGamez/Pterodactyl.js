@@ -1,6 +1,6 @@
 {
     "name": "pterodactyl.js",
-    "version": "0.0.0",
+    "version": "2.1.0",
     "description": "A wrapper for the Pterodactyl Panel API",
     "main": "index.js",
     "types": "src/types/index.d.ts",
