@@ -22,7 +22,7 @@ class ClientServer extends ClientServerModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/client?page=${page}`);
-                resolve(res.data.data.map((value: any) => new ClientServer(api, value.attributes, res.data.meta)));
+                resolve(res.data.map((value: any) => new ClientServer(api, value.attributes, res.pagination)));
             } catch (error) {
                 reject(error);
             }
@@ -41,56 +41,101 @@ class ClientServer extends ClientServerModel {
     }
 
     public cpuUsage(): Promise<UtilizationData> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve({ used: res.data.attributes.cpu.current, total: res.data.attributes.cpu.limit })).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/client/servers/${this.identifier}/utilization`);
+                resolve({ used: res.data.attributes.cpu.current, total: res.data.attributes.cpu.limit });
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public diskUsage(): Promise<UtilizationData> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve({ used: res.data.attributes.disk.current, total: res.data.attributes.disk.limit })).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/client/servers/${this.identifier}/utilization`);
+                resolve({ used: res.data.attributes.disk.current, total: res.data.attributes.disk.limit });
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public memoryUsage(): Promise<UtilizationData> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve({ used: res.data.attributes.memory.current, total: res.data.attributes.memory.limit })).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/client/servers/${this.identifier}/utilization`);
+                resolve({ used: res.data.attributes.memory.current, total: res.data.attributes.memory.limit });
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public powerState(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/utilization`).then(res => resolve(res.data.attributes.state)).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/client/servers/${this.identifier}/utilization`);
+                resolve(res.data.attributes.state);
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public powerAction(signal: 'start' | 'stop' | 'restart' | 'kill'): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal }).then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public start(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'start' }).then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'start' });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public stop(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'stop' }).then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'stop' });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public restart(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'restart' }).then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'restart' });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public kill(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'kill' }).then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'kill' });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
@@ -103,8 +148,13 @@ class ClientServer extends ClientServerModel {
     }
 
     public sendCommand(command: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/client/servers/${this.identifier}/command`, 'POST', { command }).then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/client/servers/${this.identifier}/command`, 'POST', { command });
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 }

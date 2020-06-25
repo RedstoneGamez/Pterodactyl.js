@@ -17,7 +17,7 @@ class NodeAllocation extends NodeAllocationModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/application/nodes/${node}/allocations?page=${page}`);
-                resolve(res.data.data.map((value: any) => new NodeAllocation(api, node, value.attributes, res.data.meta)));
+                resolve(res.data.map((value: any) => new NodeAllocation(api, node, value.attributes, res.pagination)));
             } catch (error) {
                 reject(error);
             }
@@ -25,8 +25,13 @@ class NodeAllocation extends NodeAllocationModel {
     }
 
     public delete(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/nodes/${this.node}/allocations/${this.id}`, 'DELETE').then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/nodes/${this.node}/allocations/${this.id}`);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 }

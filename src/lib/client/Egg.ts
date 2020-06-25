@@ -14,7 +14,7 @@ class Egg extends EggModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/application/nests/${nest}/eggs`);
-                resolve(res.data.data.map((value: any) => new Egg(api, value.attributes)));
+                resolve(res.data.map((value: any) => new Egg(api, value.attributes)));
             } catch (error) {
                 reject(error);
             }

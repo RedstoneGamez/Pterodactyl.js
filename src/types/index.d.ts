@@ -1,6 +1,4 @@
 declare module 'pterodactyl.js' {
-    import { AxiosResponse } from 'axios';
-
     export class Builder {
         constructor(url?: string, apiKey?: string);
 
@@ -27,7 +25,7 @@ declare module 'pterodactyl.js' {
 
         private getHostname(): string;
 
-        public call(endpoint: string, method: any, data: any): Promise<AxiosResponse<any>>;
+        public call(endpoint: string, method: any, data: any): Promise<ResponseData>;
 
         private handleError(error: any): any;
     }
@@ -506,10 +504,10 @@ declare module 'pterodactyl.js' {
 
     // Type Defs
 
-    interface PterodactylAPIOptions {
-        url: string;
-        baseUrl: string;
-        apiKey: string;
+    interface ResponseData {
+        statusCode: number,
+        data: any,
+        pagination: PaginationOptionsRaw
     }
 
     interface ServerLimits {

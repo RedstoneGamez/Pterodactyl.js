@@ -1,14 +1,16 @@
-import axios, { AxiosResponse } from 'axios';
+import fetch from 'node-fetch';
 
-const packageJson = require('../package.json');
+import { PaginationOptionsRaw } from './models/Pagination';
 
-interface PterodactylAPIOptions {
-    url: string;
-    baseUrl: string;
-    apiKey: string;
+const pkg = require('../package.json');
+
+interface ResponseData {
+    statusCode: number,
+    data: any,
+    pagination: PaginationOptionsRaw
 }
 
-class PterodactylAPI implements PterodactylAPIOptions {
+class PterodactylAPI {
     public url: string;
     public baseUrl: string;
     public apiKey: string;
@@ -47,33 +49,108 @@ class PterodactylAPI implements PterodactylAPIOptions {
         }
     }
 
-    public call(endpoint: string = '/', method: any = 'GET', data: any = {}): Promise<AxiosResponse<any>> {
+    // public call(endpoint: string = '/', method: any = 'GET', data: any = {}): Promise<AxiosResponse<any>> {
+    //     let url = this.baseUrl + endpoint;
+
+    //     return new Promise((resolve, reject) => {
+    //         axios.request({
+    //             url,
+    //             method,
+    //             data: JSON.stringify(data),
+    //             maxRedirects: 5,
+    //             headers: {
+    //                 'Authorization': `Bearer ${this.apiKey}`,
+    //                 'Content-Type': 'application/json',
+    //                 'User-Agent': `Pterodactyl.js v${packageJson.version}`
+    //             }
+    //         }).then(response => resolve(response)).catch(error => reject(this.handleError(error.response.data)));
+    //     });
+    // }
+
+    public call(endpoint: string = '/', method: any = 'GET', data?: any): Promise<ResponseData> {
         let url = this.baseUrl + endpoint;
 
-        return new Promise((resolve, reject) => {
-            axios.request({
-                url,
-                method,
-                data: JSON.stringify(data),
-                maxRedirects: 5,
-                headers: {
-                    'Authorization': `Bearer ${this.apiKey}`,
-                    'Content-Type': 'application/json',
-                    'User-Agent': `Pterodactyl.js v${packageJson.version}`
-                }
-            }).then(response => resolve(response)).catch(error => reject(this.handleError(error.response.data)));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let options: any = {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${this.apiKey}`,
+                        'Content-Type': 'application/json',
+                        'User-Agent': `Pterodactyl.js v${pkg.version}`,
+                        'Accept': 'application/json'
+                    },
+                };
+
+                if (data) options.body = JSON.stringify(data);
+
+                let res = await fetch(url, options);
+
+                let body = await res.json();
+
+                if (body.errors) return reject(this.handleError(body.errors, res.status));
+
+                resolve({
+                    statusCode: res.status,
+                    data: body.data ? body.data : body,
+                    pagination: body.meta ? body.meta.pagination : null,
+                });
+            } catch (error) {
+                reject(this.handleError(error));
+            }
         });
     }
 
-    private handleError(error: any): any {
-        if (error.code === 'ENOTFOUND') {
-            console.log('Panel URL Not Found!');
-            return error;
+    private handleError(error: any, statusCode?: number) {
+        if (typeof statusCode === 'number') {
+            switch (statusCode) {
+                case 400:
+                    return { statusCode, message: 'The request sent was invalid. (400 Bad Request)' };
+                case 401:
+                    return { statusCode, message: 'Authorization header was invalidated by the panel. (401 Unauthorized)' };
+                case 403:
+                    return { statusCode, message: 'Your key is invalid or it doesn\'t have access to that endpoint. (403 Forbidden)' };
+                case 404:
+                    return { statusCode, message: 'The endpoint requested could not be found. (404 Not Found)' };
+                case 405:
+                    return { statusCode, message: 'The method used was invalid for this endpoint. (405 Method Not Allowed)' };
+                case 406:
+                    return { statusCode, message: 'The requested data was a format that isn\'t json. (406 Not Acceptable)' };
+                case 410:
+                    return { statusCode, message: 'The requested data was removed from the server. (410 Gone)' };
+                case 412:
+                    return { statusCode, message: 'Some data is missing from the request. (412 Precondition Failed)' };
+                case 418:
+                    return { statusCode, message: '418 I\'m a teapot' };
+                case 429:
+                    return { statusCode, message: 'You have reached the rate limit! Slow down. (429 Too Many Requests)' };
+                case 500:
+                    return { statusCode, message: 'An error occurred on the server. (500 Internal Server Error)' };
+                case 503:
+                    return { statusCode, message: 'The server is temporarily offline for maintenance. Please try again later. (503 Service Unavailable)' };
+            }
         }
 
-        // console.log(error);
-        return error;
+        if (typeof error.push === 'function') {
+            let errors: any[] = error;
 
+            if (errors.length < 1) return error;
+
+            if (error.length < 2) {
+                let err = errors[0];
+                if (err.code === 'required') {
+                    return { message: 'A field was not provided in the request that is required.', field: err.source.field, detail: err.detail, };
+                }
+            } else {
+                return errors;
+            }
+        }
+
+        if (error.code === 'ENOTFOUND') {
+            return { message: 'A connection could not be made to the server through the URL provided.', code: 'ENOTFOUND' };
+        }
+
+        return error;
     }
 }
 

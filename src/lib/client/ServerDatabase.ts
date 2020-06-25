@@ -14,7 +14,7 @@ class ServerDatabase extends ServerDatabaseModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/application/servers/${server}/databases`);
-                resolve(res.data.data.map((value: any) => new ServerDatabase(api, value.attributes)));
+                resolve(res.data.map((value: any) => new ServerDatabase(api, value.attributes)));
             } catch (error) {
                 reject(error);
             }
@@ -32,15 +32,27 @@ class ServerDatabase extends ServerDatabaseModel {
         });
     }
 
-    public resetPassword(): Promise<ServerDatabase> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.server}/databases/${this.id}/reset-password`, 'POST').then(res => resolve(new ServerDatabase(this.api, res.data.attributes))).catch(error => reject(error));
+    public resetPassword(): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/servers/${this.server}/databases/${this.id}/reset-password`, 'POST');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public delete(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.server}/databases/${this.id}`, 'DELETE').then(res => resolve()).catch(error => reject(error));
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await this.api.call(`/application/servers/${this.server}/databases/${this.id}`, 'DELETE');
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
         });
     }
 }

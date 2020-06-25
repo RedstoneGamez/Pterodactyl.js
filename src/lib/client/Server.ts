@@ -15,8 +15,13 @@ class Server extends ServerModel {
     }
 
     public static create(api: AdminAPI, options: NewServerOptions): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            api.call(`/application/servers`, 'POST', this.getCreateOptions(options)).then(res => resolve(new Server(api, res.data.attributes))).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/servers`, 'POST', this.getCreateOptions(options));
+                resolve(new Server(api, res.data.attributes))
+            } catch (error) {
+                reject(error)
+            }
         });
     }
 
@@ -24,7 +29,7 @@ class Server extends ServerModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/application/servers?page=${page}`);
-                resolve(res.data.data.map((value: any) => new Server(api, value.attributes, res.data.meta)));
+                resolve(res.data.map((value: any) => new Server(api, value.attributes, res.pagination)));
             } catch (error) {
                 reject(error);
             }
@@ -111,43 +116,82 @@ class Server extends ServerModel {
     }
 
     public updateDetails(options: ServerDetailsRequestOptions): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject(options)).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject(options));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public updateBuild(options: ServerBuildConfigRequestOptions): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject(options)).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject(options));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public updateStartup(options: ServerStartupRequestOptions): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject(options)).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject(options));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public suspend(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/suspend`, 'POST').then(res => resolve(res.data)).catch(error => reject(error));
+    public suspend(): Promise<void> {
+        this.suspended = true;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/servers/${this.internalId}/suspend`, 'POST');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public unsuspend(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/unsuspend`, 'POST').then(res => resolve(res.data)).catch(error => reject(error));
+    public unsuspend(): Promise<void> {
+        this.suspended = false;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/servers/${this.internalId}/unsuspend`, 'POST');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
-    public reinstall(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/reinstall`, 'POST').then(res => resolve(res.data)).catch(error => reject(error));
+    public reinstall(): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/servers/${this.internalId}/reinstall`, 'POST');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
-    public rebuild(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/rebuild`, 'POST').then(res => resolve(res.data)).catch(error => reject(error));
+    public rebuild(): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/servers/${this.internalId}/rebuild`, 'POST');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
@@ -158,94 +202,198 @@ class Server extends ServerModel {
     }
 
     public setName(name: string): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ name })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.name = name;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ name }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setDescription(description: string): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ description })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.description = description;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ description }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setUser(user: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ user })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.user = user;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ user }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
+
     }
 
     public setMemory(memory: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { memory } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.limits.memory = memory;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ limits: { memory } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
+
     }
 
     public setCPU(cpu: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { cpu } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.limits.cpu = cpu;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { cpu } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setDisk(disk: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { disk } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.limits.disk = disk;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { disk } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setIO(io: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { io } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
-        });
+        this.limits.io = io;
 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { io } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
     public setSwap(swap: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { swap } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
-        });
+        this.limits.swap = swap;
 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { swap } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
     public setDatabaseAmount(amount: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { databases: amount } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.featureLimits.databases = amount;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { databases: amount } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setAllocationAmount(amount: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { allocations: amount } })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.featureLimits.allocations = amount;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { allocations: amount } }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setStartupCommand(command: string): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ startup: command })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.container.startupCommand = command;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ startup: command }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setEgg(egg: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ egg })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.egg = egg;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ egg }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public setPack(pack: number): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ pack })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.pack = pack;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ pack }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
+
     }
 
     public setImage(image: string): Promise<Server> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ image })).then(res => resolve(new Server(this.api, res.data.attributes))).catch(error => reject(error));
+        this.container.image = image;
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ image }));
+                resolve(new Server(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
     public createDatabase(name: string, remote: string, host: number): Promise<ServerDatabase> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', { database: name, remote, host }).then(res => resolve(new ServerDatabase(this.api, res.data.attributes))).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/servers/${this.internalId}/databases`, 'POST', { database: name, remote, host });
+                resolve(new ServerDatabase(this.api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
@@ -258,8 +406,13 @@ class Server extends ServerModel {
     }
 
     public delete(force?: boolean): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.api.call(`/application/servers/${this.internalId}${force ? '/force' : ''}`, 'DELETE').then(res => resolve()).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.api.call(`/application/servers/${this.internalId}${force ? '/force' : ''}`, 'DELETE');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 }

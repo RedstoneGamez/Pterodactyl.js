@@ -14,8 +14,13 @@ class Location extends LocationModel {
     }
 
     public static create(api: AdminAPI, options: NewLocationOptions): Promise<Location> {
-        return new Promise((resolve, reject) => {
-            api.call(`/application/locations`, 'POST', options).then(res => resolve(new Location(api, res.data.attributes))).catch(error => reject(error));
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await api.call(`/application/locations`, 'POST', { short: options.shortCode, long: options.description });
+                resolve(new Location(api, res.data.attributes));
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
@@ -23,7 +28,7 @@ class Location extends LocationModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/application/locations?page=${page}`);
-                resolve(res.data.data.map((value: any) => new Location(api, value.attributes, res.data.meta)));
+                resolve(res.data.map((value: any) => new Location(api, value.attributes, res.pagination)));
             } catch (error) {
                 reject(error);
             }
@@ -51,20 +56,47 @@ class Location extends LocationModel {
     }
 
     public setShortCode(shortCode: string): Promise<Location> {
+        this.shortCode = shortCode;
+
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/locations/${this.id}`, 'PATCH', this.getRequestObject({ short: shortCode })).then(res => resolve(new Location(this.api, res.data.attributes))).catch(error => reject(error));
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let res = await this.api.call(`/application/locations`, 'POST', this.getRequestObject({ short: shortCode }));
+                    resolve(new Location(this.api, res.data.attributes));
+                } catch (error) {
+                    reject(error);
+                }
+            });
         });
     }
 
     public setDescription(description: string): Promise<Location> {
+        this.description = description;
+
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/locations/${this.id}`, 'PATCH', this.getRequestObject({ long: description })).then(res => resolve(new Location(this.api, res.data.attributes))).catch(error => reject(error));
+            return new Promise(async (resolve, reject) => {
+                try {
+                    let res = await this.api.call(`/application/locations`, 'POST', this.getRequestObject({ long: description }));
+                    resolve(new Location(this.api, res.data.attributes));
+                } catch (error) {
+                    reject(error);
+                }
+            });
         });
     }
 
     public delete(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.api.call(`/application/locations/${this.id}`, 'DELETE').then(res => resolve()).catch(error => reject(error));
+            return new Promise((resolve, reject) => {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        await this.api.call(`/application/locations/${this.id}`, 'DELETE');
+                        resolve();
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            });
         });
     }
 }

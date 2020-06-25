@@ -5,9 +5,14 @@ import ClientServer from './client/ClientServer';
 class UserClient extends PterodactylAPI {
     constructor(url: string, apiKey: string) {
         super(url, apiKey);
+
+        this.testConnection()
+            .catch(error => {
+                throw error;
+            });
     }
 
-    public testConnection(): Promise<any> {
+    public testConnection(): Promise<void> {
         let solutions: any = {
             0: 'Most likely hostname is configured wrong causing the request never get executed.',
             401: 'Authorization header either missing or not provided.',
@@ -21,15 +26,13 @@ class UserClient extends PterodactylAPI {
             this.call('/client').then(res => {
                 let error = null;
 
-                if (res.status !== 200) {
-                    let statusCode = res.status;
-
+                if (res.statusCode !== 200) {
+                    let { statusCode } = res;
                     error = `Non success status code received: ${statusCode}.\nPossible sulutions: ${solutions[statusCode] !== undefined ? solutions[statusCode] : 'None.'}`
-                } else {
-                    error = 'Authentication successful, you\'re good to go!';
                 }
 
-                resolve(error);
+                if (error !== null) return reject(new Error(error));
+                resolve();
             }).catch(error => reject(error));
         });
     }

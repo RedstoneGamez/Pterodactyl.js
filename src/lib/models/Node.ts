@@ -7,7 +7,7 @@ interface NodeOptions {
     fqdn: string;
     scheme: string;
     behindProxy: string;
-    maintenanceMode: string;
+    maintenanceMode: boolean;
     memory: number;
     memoryOverAllocate: number;
     disk: number;
@@ -29,7 +29,7 @@ interface NodeOptionsRaw {
     fqdn: string;
     scheme: string;
     behind_proxy: string;
-    maintenance_mode: string;
+    maintenance_mode: boolean;
     memory: number;
     memory_overallocate: number;
     disk: number;
@@ -50,7 +50,7 @@ interface NewNodeOptions {
     fqdn: string;
     scheme: string;
     behindProxy: string;
-    maintenanceMode: string;
+    maintenanceMode: boolean;
     memory: number;
     memoryOverAllocate: number;
     disk: number;
@@ -72,7 +72,7 @@ class Node implements NodeOptions {
     public fqdn: string;
     public scheme: string;
     public behindProxy: string;
-    public maintenanceMode: string;
+    public maintenanceMode: boolean;
     public memory: number;
     public memoryOverAllocate: number;
     public disk: number;

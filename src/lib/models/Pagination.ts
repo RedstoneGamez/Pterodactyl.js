@@ -8,14 +8,12 @@ interface PaginationOptions {
 }
 
 interface PaginationOptionsRaw {
-    pagination: {
-        total: number;
-        count: number;
-        per_page: number;
-        current_page: number;
-        total_pages: number;
-        links: any[];
-    };
+    total: number;
+    count: number;
+    per_page: number;
+    current_page: number;
+    total_pages: number;
+    links: any[];
 }
 
 export { PaginationOptions, PaginationOptionsRaw };
@@ -29,12 +27,12 @@ class Pagination implements PaginationOptions {
     public links: any[];
 
     constructor(data: PaginationOptionsRaw) {
-        this.total = data.pagination.total;
-        this.count = data.pagination.count;
-        this.pageSize = data.pagination.per_page;
-        this.currentPage = data.pagination.current_page;
-        this.totalPages = data.pagination.total_pages;
-        this.links = data.pagination.links;
+        this.total = data.total;
+        this.count = data.count;
+        this.pageSize = data.per_page;
+        this.currentPage = data.current_page;
+        this.totalPages = data.total_pages;
+        this.links = data.links;
     }
 
     public nextPage(): number {

@@ -19,7 +19,7 @@ class Nest extends NestModel {
         return new Promise(async (resolve, reject) => {
             try {
                 let res = await api.call(`/application/nests?page=${page}`);
-                resolve(res.data.data.map((value: any) => new Nest(api, value.attributes, res.data.meta)));
+                resolve(res.data.map((value: any) => new Nest(api, value.attributes, res.pagination)));
             } catch (error) {
                 reject(error);
             }

@@ -1,6 +1,6 @@
 {
     "name": "pterodactyl.js",
-    "version": "0.0.1",
+    "version": "0.0.0",
     "description": "A wrapper for the Pterodactyl Panel API",
     "main": "index.js",
     "types": "src/types/index.d.ts",
@@ -20,10 +20,11 @@
     "author": "RedstoneGamez (RedstoneGamez#0001)",
     "license": "ISC",
     "dependencies": {
-        "axios": "^0.19.0"
+        "node-fetch": "^2.6.0"
     },
     "devDependencies": {
         "@types/node": "^12.0.8",
+        "@types/node-fetch": "^2.5.7",
         "typescript": "^3.5.2"
     }
 }
