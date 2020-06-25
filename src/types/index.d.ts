@@ -106,7 +106,7 @@ declare module 'pterodactyl.js' {
 
         public databases(): Promise<number>;
 
-        public allocations(): Promise<number>
+        public allocations(): Promise<number>;
 
         public sendCommand(command: string): Promise<any>;
     }
@@ -186,7 +186,7 @@ declare module 'pterodactyl.js' {
 
         public setDaemonBase(baseDirectory: string): Promise<Node>;
 
-        public allocations(): Promise<NodeAllocation[]>;
+        public getAllocations(): Promise<NodeAllocation[]>;
 
         public createAllocations(ip: string, alias: string, ports: string[]): Promise<void>;
 
