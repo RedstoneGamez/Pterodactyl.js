@@ -1,13 +1,23 @@
 # Pterodactyl.js
-A javascript wrapper to interact with the Admin and User API of [Pterodactyl Panel](https://pterodactyl.io).
+
+Pterodactyl.js is currently a node.js only wrapper which interfaces with the Client and Admin API on the [Pterodactyl Panel](https://pterodactyl.io). It is a fully object-oriented library which utilizes almost all functions within the API routes. The functions put forth allow for individual fields to be edited as well as all at once. This permits for creating, reading, updating and deleting for any resource in the Admin API. This library is also written in TypeScript with a comprehensive type declaration along with it. 
+
+Pterodactyl.js uses promises for handling of the data that is provided along with update functions.
 
 ## Installation
+To install pterodactyl.js, you must either use NPM or Yarn. 
 
+### NPM
 ```console
 npm i pterodactyl.js
 ```
 
-## Usage
+### Yarn
+```console
+yarn add pterodactyl.js
+```
+
+## Basic Usage
 
 ### Admin API
 
@@ -21,11 +31,9 @@ const client = new Pterodactyl.Builder()
 
 client.getServers()
 .then(async servers => {
-    let server = await client.getServer(servers[0].id);
+    let server = servers[0];
 
-    let info = await server.getInfo();
-
-    console.log(info.toJSON());
+    console.log(server.toJSON());
 }).catch(error => console.log(error));
 ```
 
@@ -41,11 +49,9 @@ const client = new Pterodactyl.Builder()
 
 client.getClientServers()
 .then(async servers => {
-    let server = await client.getClientServer(servers[0].identifier);
+    let server = servers[0];
 
-    let info = await server.getInfo();
-
-    console.log(info.toJSON());
+    console.log(server.toJSON());
 
     await server.start();
 
@@ -55,42 +61,4 @@ client.getClientServers()
 
 ## Examples
 
-### Linking System
-
-```js
-const Pterodactyl = require('pterodactyl.js');
-
-const client = new Pterodactyl.Builder()
-    .setURL('https://pterodactyl.app/')
-    .setAPIKey('API Key')
-    .asAdmin();
-
-let isAccountCredentials = (username, email) => {
-    return new Promise((resolve, reject) => {
-        client.getUsers()
-        .then(async users => {
-            let user = users.filter(user => user.username === username);
-
-            if (user) {
-                let info = await user.getInfo();
-
-                if (info.email === email) {
-                    resolve({ correct: true, user });
-                } else {
-                    resolve({ correct: false });
-                }
-            } else {
-
-            }
-        }).catch(error => reject(error));
-    });
-};
-
-isAccountCredentials('demo', 'demo@pterodactyl.io').then(account => {
-    if (account.correct) {
-        console.log('Correct! The username and email provided are valid.');
-    } else {
-        console.log('Incorrect! The username and email provided are invalid.');
-    }
-}).catch(error => console.log(error));
-```
+### [Linking System](https://github.com/RedstoneGamez/Pterodactyl.js/tree/master/examples#)
