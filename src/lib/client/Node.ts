@@ -1,8 +1,11 @@
 import AdminAPI from '../AdminAPI';
 
-import NodeModel, { NodeOptionsRaw, NewNodeOptions } from '../models/Node';
 import NodeAllocation from './NodeAllocation';
+
+import NodeModel, { NodeOptionsRaw, NewNodeOptions, NodeConfigurationOptions } from '../models/Node';
 import Pagination, { PaginationOptionsRaw } from '../models/Pagination';
+
+import Yaml from '../utils/Yaml';
 
 class Node extends NodeModel {
     private api: AdminAPI;
@@ -85,6 +88,37 @@ class Node extends NodeModel {
         };
 
         return Object.assign(request, data);
+    }
+
+    public getConfiguration(): Promise<NodeConfigurationOptions> {
+        if (!this.api.beta) throw new Error('You did not set beta to true so this function cannot be used. It can only be used with panel versions 1.x and up.');
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/application/nodes/${this.id}/configuration`);
+                resolve(res.data);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    public getStringifiedConfiguration(type: 'json' | 'yaml' = 'yaml', indent: number = 2): Promise<string> {
+        if (!this.api.beta) throw new Error('You did not set beta to true so this function cannot be used. It can only be used with panel versions 1.x and up.');
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let data = await this.getConfiguration();
+
+                if (type === 'yaml') {
+                    resolve(Yaml.stringify(data));
+                } else {
+                    resolve(JSON.stringify(data, null, indent));
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
     public setPublic(isPublic: boolean): Promise<Node> {

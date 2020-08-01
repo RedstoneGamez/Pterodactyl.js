@@ -1,13 +1,15 @@
-import UserAPI from './UserAPI';
-import AdminAPI from './AdminAPI';
+import UserClient from './UserAPI';
+import AdminClient from './AdminAPI';
 
 class ClientBuilder {
     private url: string;
     private apiKey: string;
+    private beta: boolean;
 
-    constructor(url?: string, apiKey?: string) {
+    constructor(url?: string, apiKey?: string, beta: boolean = false) {
         this.url = url;
         this.apiKey = apiKey;
+        this.beta = beta;
     }
 
     public setURL(url: string): ClientBuilder {
@@ -20,6 +22,11 @@ class ClientBuilder {
         return this;
     }
 
+    public setBeta(beta: boolean): ClientBuilder {
+        this.beta = beta;
+        return this;
+    }
+
     private build(): boolean {
         if (this.url && this.apiKey) {
             return true;
@@ -28,19 +35,19 @@ class ClientBuilder {
         }
     }
 
-    public asUser(): UserAPI {
+    public asUser(): UserClient {
         try {
             this.build();
-            return new UserAPI(this.url, this.apiKey);
+            return new UserClient(this.url, this.apiKey, this.beta);
         } catch (error) {
             throw error;
         }
     }
 
-    public asAdmin(): AdminAPI {
+    public asAdmin(): AdminClient {
         try {
             this.build();
-            return new AdminAPI(this.url, this.apiKey);
+            return new AdminClient(this.url, this.apiKey, this.beta);
         } catch (error) {
             throw error;
         }

@@ -1,10 +1,16 @@
 import PterodactylAPI from './index';
+import ClientServerController from './controllers/ClientServers';
 
-import ClientServer from './client/ClientServer';
+// import ClientServer from './client/ClientServer';
+// import ClientAccount from './client/ClientAccount';
 
 class UserClient extends PterodactylAPI {
-    constructor(url: string, apiKey: string) {
-        super(url, apiKey);
+    public servers: ClientServerController;
+
+    constructor(url: string, apiKey: string, beta: boolean) {
+        super(url, apiKey, beta);
+
+        this.servers = new ClientServerController(this);
 
         this.testConnection()
             .catch(error => {
@@ -37,12 +43,8 @@ class UserClient extends PterodactylAPI {
         });
     }
 
-    public getClientServers(page?: number): Promise<ClientServer[]> {
-        return ClientServer.getAll(this, page);
-    }
-
-    public getClientServer(serverId: string): Promise<ClientServer> {
-        return ClientServer.getById(this, serverId);
+    public getAccount(): Promise<ClientAccount> {
+        return ClientAccount.get(this);
     }
 }
 

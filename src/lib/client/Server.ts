@@ -118,7 +118,7 @@ class Server extends ServerModel {
     public updateDetails(options: ServerDetailsRequestOptions): Promise<Server> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject(options));
+                let res = await this.api.call(`/application/servers/${this.id}/details`, 'PATCH', this.getDetailsRequestObject(options));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -129,7 +129,7 @@ class Server extends ServerModel {
     public updateBuild(options: ServerBuildConfigRequestOptions): Promise<Server> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject(options));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject(options));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -140,7 +140,7 @@ class Server extends ServerModel {
     public updateStartup(options: ServerStartupRequestOptions): Promise<Server> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject(options));
+                let res = await this.api.call(`/application/servers/${this.id}/startup`, 'PATCH', this.getStartupRequestObject(options));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -149,11 +149,11 @@ class Server extends ServerModel {
     }
 
     public suspend(): Promise<void> {
-        this.suspended = true;
+        this.suspended = true;        
 
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/application/servers/${this.internalId}/suspend`, 'POST');
+                await this.api.call(`/application/servers/${this.id}/suspend`, 'POST');
                 resolve();
             } catch (error) {
                 reject(error);
@@ -165,8 +165,8 @@ class Server extends ServerModel {
         this.suspended = false;
 
         return new Promise(async (resolve, reject) => {
-            try {
-                await this.api.call(`/application/servers/${this.internalId}/unsuspend`, 'POST');
+            try {                
+                await this.api.call(`/application/servers/${this.id}/unsuspend`, 'POST');
                 resolve();
             } catch (error) {
                 reject(error);
@@ -177,7 +177,7 @@ class Server extends ServerModel {
     public reinstall(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/application/servers/${this.internalId}/reinstall`, 'POST');
+                await this.api.call(`/application/servers/${this.id}/reinstall`, 'POST');
                 resolve();
             } catch (error) {
                 reject(error);
@@ -187,7 +187,7 @@ class Server extends ServerModel {
     public rebuild(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/application/servers/${this.internalId}/rebuild`, 'POST');
+                await this.api.call(`/application/servers/${this.id}/rebuild`, 'POST');
                 resolve();
             } catch (error) {
                 reject(error);
@@ -206,7 +206,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ name }));
+                let res = await this.api.call(`/application/servers/${this.id}/details`, 'PATCH', this.getDetailsRequestObject({ name }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -219,7 +219,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ description }));
+                let res = await this.api.call(`/application/servers/${this.id}/details`, 'PATCH', this.getDetailsRequestObject({ description }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -232,7 +232,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ user }));
+                let res = await this.api.call(`/application/servers/${this.id}/details`, 'PATCH', this.getDetailsRequestObject({ user }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -246,7 +246,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/details`, 'PATCH', this.getDetailsRequestObject({ limits: { memory } }));
+                let res = await this.api.call(`/application/servers/${this.id}/details`, 'PATCH', this.getDetailsRequestObject({ limits: { memory } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -260,7 +260,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { cpu } }));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject({ limits: { cpu } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -273,7 +273,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { disk } }));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject({ limits: { disk } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -286,7 +286,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { io } }));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject({ limits: { io } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -299,7 +299,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ limits: { swap } }));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject({ limits: { swap } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -312,7 +312,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { databases: amount } }));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { databases: amount } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -325,7 +325,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { allocations: amount } }));
+                let res = await this.api.call(`/application/servers/${this.id}/build`, 'PATCH', this.getBuildRequestObject({ feature_limits: { allocations: amount } }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -338,7 +338,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ startup: command }));
+                let res = await this.api.call(`/application/servers/${this.id}/startup`, 'PATCH', this.getStartupRequestObject({ startup: command }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -351,7 +351,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ egg }));
+                let res = await this.api.call(`/application/servers/${this.id}/startup`, 'PATCH', this.getStartupRequestObject({ egg }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -364,7 +364,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ pack }));
+                let res = await this.api.call(`/application/servers/${this.id}/startup`, 'PATCH', this.getStartupRequestObject({ pack }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -378,7 +378,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/startup`, 'PATCH', this.getStartupRequestObject({ image }));
+                let res = await this.api.call(`/application/servers/${this.id}/startup`, 'PATCH', this.getStartupRequestObject({ image }));
                 resolve(new Server(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -389,7 +389,7 @@ class Server extends ServerModel {
     public createDatabase(name: string, remote: string, host: number): Promise<ServerDatabase> {
         return new Promise(async (resolve, reject) => {
             try {
-                let res = await this.api.call(`/application/servers/${this.internalId}/databases`, 'POST', { database: name, remote, host });
+                let res = await this.api.call(`/application/servers/${this.id}/databases`, 'POST', { database: name, remote, host });
                 resolve(new ServerDatabase(this.api, res.data.attributes));
             } catch (error) {
                 reject(error);
@@ -408,7 +408,7 @@ class Server extends ServerModel {
     public delete(force?: boolean): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/application/servers/${this.internalId}${force ? '/force' : ''}`, 'DELETE');
+                await this.api.call(`/application/servers/${this.id}${force ? '/force' : ''}`, 'DELETE');
                 resolve();
             } catch (error) {
                 reject(error);

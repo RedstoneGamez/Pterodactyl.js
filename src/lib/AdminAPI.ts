@@ -13,8 +13,8 @@ import { NewLocationOptions } from './models/Location';
 import { NewNodeOptions } from './models/Node';
 
 class AdminClient extends PterodactylAPI {
-    constructor(url: string, apiKey: string) {
-        super(url, apiKey);
+    constructor(url: string, apiKey: string, beta: boolean) {
+        super(url, apiKey, beta);
 
         this.testConnection()
             .catch(error => {

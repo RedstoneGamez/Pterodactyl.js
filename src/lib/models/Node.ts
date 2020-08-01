@@ -42,6 +42,29 @@ interface NodeOptionsRaw {
     created_at: string;
 }
 
+interface NodeConfigurationOptions {
+    debug: boolean;
+    uuid: string;
+    token_id: string;
+    api: {
+        host: string;
+        port: number;
+        ssl: {
+            enabled: boolean;
+            cert: string;
+            key: string;
+        };
+        upload_limit: number;
+    };
+    system: {
+        data: string;
+        sftp: {
+            bind_port: number;
+        };
+    };
+    remote: string;
+}
+
 interface NewNodeOptions {
     name: string;
     description?: string;
@@ -61,7 +84,7 @@ interface NewNodeOptions {
     daemonBase: string;
 }
 
-export { NodeOptions, NodeOptionsRaw, NewNodeOptions };
+export { NodeOptions, NodeOptionsRaw, NewNodeOptions, NodeConfigurationOptions };
 
 class Node implements NodeOptions {
     public id: number;

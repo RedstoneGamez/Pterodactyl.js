@@ -3,9 +3,16 @@ import UserAPI from '../UserAPI';
 import ClientServerModel, { ServerOptionsRaw, } from '../models/ClientServer';
 import Pagination, { PaginationOptionsRaw, } from '../models/Pagination';
 
+import WebSocket from '../utils/WebSocket';
+
 interface UtilizationData {
     used: number;
     total: number;
+}
+
+interface WebSocketInfo {
+    token: string;
+    socket: string;
 }
 
 class ClientServer extends ClientServerModel {
@@ -147,6 +154,17 @@ class ClientServer extends ClientServerModel {
         return Promise.resolve(this.featureLimits.allocations);
     }
 
+    public getDatabases(): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/client/servers/${this.identifier}/databases`);
+                resolve(res.data);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
     public sendCommand(command: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -155,6 +173,48 @@ class ClientServer extends ClientServerModel {
             } catch (error) {
                 reject(error);
             }
+        });
+    }
+
+    public getWebsocketToken(): Promise<WebSocketInfo> {
+        if (!this.api.beta) throw new Error('You did not set beta to true so this function cannot be used. It can only be used with panel versions 1.x and up.');
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let res = await this.api.call(`/client/servers/${this.identifier}/websocket`);
+                resolve(res.data);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    public websocket(): Promise<WebSocket> {
+        if (!this.api.beta) throw new Error('You did not set beta to true so this function cannot be used. It can only be used with panel versions 1.x and up.');
+
+        return new Promise(async (resolve, reject) => {
+            const socket = new WebSocket();
+
+            const updateToken = () => {
+                this.getWebsocketToken()
+                    .then(data => socket.setToken(data.token, true))
+                    .catch(error => {
+                        throw error;
+                    });
+            };
+
+            this.getWebsocketToken()
+                .then(data => {
+                    console.log(data); // encountered HTTP/500 error while handling request error=websocket: request origin not allowed by Upgrader.CheckOrigin
+
+                    socket.setToken(data.token).connect(this.api, data.socket);
+
+                    socket.on('token expiring', () => updateToken());
+                    socket.on('token expired', () => updateToken());
+
+                    resolve(socket);
+                })
+                .catch(error => reject(error));
         });
     }
 }

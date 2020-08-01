@@ -14,10 +14,12 @@ class PterodactylAPI {
     public url: string;
     public baseUrl: string;
     public apiKey: string;
+    public beta: boolean;
 
-    constructor(url: string, apiKey: string) {
+    constructor(url: string, apiKey: string, beta: boolean) {
         this.url = url;
         this.apiKey = apiKey;
+        this.beta = beta;
 
         this.baseUrl = this.getHostname();
     }
@@ -49,26 +51,11 @@ class PterodactylAPI {
         }
     }
 
-    // public call(endpoint: string = '/', method: any = 'GET', data: any = {}): Promise<AxiosResponse<any>> {
-    //     let url = this.baseUrl + endpoint;
-
-    //     return new Promise((resolve, reject) => {
-    //         axios.request({
-    //             url,
-    //             method,
-    //             data: JSON.stringify(data),
-    //             maxRedirects: 5,
-    //             headers: {
-    //                 'Authorization': `Bearer ${this.apiKey}`,
-    //                 'Content-Type': 'application/json',
-    //                 'User-Agent': `Pterodactyl.js v${packageJson.version}`
-    //             }
-    //         }).then(response => resolve(response)).catch(error => reject(this.handleError(error.response.data)));
-    //     });
-    // }
-
-    public call(endpoint: string = '/', method: any = 'GET', data?: any): Promise<ResponseData> {
+    public call(endpoint: string = '/', method: any = 'GET', data?: any, noBody: boolean = false): Promise<ResponseData> {
         let url = this.baseUrl + endpoint;
+
+        console.log(url);
+        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -86,14 +73,21 @@ class PterodactylAPI {
 
                 let res = await fetch(url, options);
 
-                let body = await res.json();
+                let body: any = null;
+                let resp: any = null;
+                let pagination: any = null;
 
-                if (body.errors) return reject(this.handleError(body.errors, res.status));
+                if (!noBody) {
+                    body = await res.json();
+                    if (body.errors) return reject(this.handleError(body.errors, res.status));
+                    resp = body.data ? body.data : body;
+                    pagination = body.meta ? body.meta.pagination : null;
+                }
 
                 resolve({
                     statusCode: res.status,
-                    data: body.data ? body.data : body,
-                    pagination: body.meta ? body.meta.pagination : null,
+                    data: resp,
+                    pagination,
                 });
             } catch (error) {
                 reject(this.handleError(error));
@@ -101,7 +95,7 @@ class PterodactylAPI {
         });
     }
 
-    private handleError(error: any, statusCode?: number) {
+    public handleError(error: any, statusCode?: number) {
         if (typeof statusCode === 'number') {
             switch (statusCode) {
                 case 400:
@@ -121,7 +115,7 @@ class PterodactylAPI {
                 case 412:
                     return { statusCode, message: 'Some data is missing from the request. (412 Precondition Failed)' };
                 case 418:
-                    return { statusCode, message: '418 I\'m a teapot' };
+                    return { statusCode, message: '(418 I\'m a teapot)' };
                 case 429:
                     return { statusCode, message: 'You have reached the rate limit! Slow down. (429 Too Many Requests)' };
                 case 500:

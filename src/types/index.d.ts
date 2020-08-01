@@ -1,13 +1,16 @@
 declare module 'pterodactyl.js' {
     export class Builder {
-        constructor(url?: string, apiKey?: string);
+        constructor(url?: string, apiKey?: string, beta?: boolean);
 
         private url: string;
         private apiKey: string;
+        private beta: boolean;
 
         public setURL(url: string): Builder;
 
         public setAPIKey(apiKey: string): Builder;
+
+        public setBeta(beta: boolean): Builder;
 
         private build(): boolean;
 
@@ -17,11 +20,12 @@ declare module 'pterodactyl.js' {
     }
 
     export class PterodactylAPI {
-        constructor(url: string, apiKey: string);
+        constructor(url: string, apiKey: string, beta: boolean);
 
         public url: string;
         public baseUrl: string;
         public apiKey: string;
+        public beta: boolean;
 
         private getHostname(): string;
 
