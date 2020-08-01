@@ -67,8 +67,8 @@ class PterodactylAPI {
     //     });
     // }
 
-    public call(endpoint: string = '/', method: any = 'GET', data?: any): Promise<ResponseData> {
-        let url = this.baseUrl + endpoint;
+    public call(endpoint: string = '/', method: any = 'GET', data?: any, noBody: boolean = false): Promise<ResponseData> {
+        let url = this.baseUrl + endpoint;        
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -86,14 +86,21 @@ class PterodactylAPI {
 
                 let res = await fetch(url, options);
 
-                let body = await res.json();
+                let body: any = null;
+                let resp: any = null;
+                let pagination: any = null;
 
-                if (body.errors) return reject(this.handleError(body.errors, res.status));
+                if (!noBody) {
+                    body = await res.json();
+                    if (body.errors) return reject(this.handleError(body.errors, res.status));
+                    resp = body.data ? body.data : body;
+                    pagination = body.meta ? body.meta.pagination : null;
+                }
 
                 resolve({
                     statusCode: res.status,
-                    data: body.data ? body.data : body,
-                    pagination: body.meta ? body.meta.pagination : null,
+                    data: resp,
+                    pagination,
                 });
             } catch (error) {
                 reject(this.handleError(error));

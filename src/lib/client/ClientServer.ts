@@ -87,7 +87,7 @@ class ClientServer extends ClientServerModel {
     public powerAction(signal: 'start' | 'stop' | 'restart' | 'kill'): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal });
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal }, true);
                 resolve();
             } catch (error) {
                 reject(error);
@@ -98,7 +98,7 @@ class ClientServer extends ClientServerModel {
     public start(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'start' });
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'start' }, true);
                 resolve();
             } catch (error) {
                 reject(error);
@@ -109,7 +109,7 @@ class ClientServer extends ClientServerModel {
     public stop(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'stop' });
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'stop' }, true);
                 resolve();
             } catch (error) {
                 reject(error);
@@ -120,7 +120,7 @@ class ClientServer extends ClientServerModel {
     public restart(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'restart' });
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'restart' }, true);
                 resolve();
             } catch (error) {
                 reject(error);
@@ -131,7 +131,7 @@ class ClientServer extends ClientServerModel {
     public kill(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'kill' });
+                await this.api.call(`/client/servers/${this.identifier}/power`, 'POST', { signal: 'kill' }, true);
                 resolve();
             } catch (error) {
                 reject(error);
