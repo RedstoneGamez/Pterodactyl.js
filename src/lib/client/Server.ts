@@ -153,7 +153,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/application/servers/${this.id}/suspend`, 'POST');
+                await this.api.call(`/application/servers/${this.id}/suspend`, 'POST', null, true);
                 resolve();
             } catch (error) {
                 reject(error);
@@ -166,7 +166,7 @@ class Server extends ServerModel {
 
         return new Promise(async (resolve, reject) => {
             try {
-                await this.api.call(`/application/servers/${this.id}/unsuspend`, 'POST');
+                await this.api.call(`/application/servers/${this.id}/unsuspend`, 'POST', null, true);
                 resolve();
             } catch (error) {
                 reject(error);
